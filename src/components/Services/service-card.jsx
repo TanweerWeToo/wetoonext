@@ -16,12 +16,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FacultyRequestForm } from "@/pages/Services/faculty-request-form";
-import { FacultyJoinForm } from "@/pages/Services/faculty-join-form";
+import FacultyRequestForm from "@/components/Services/faculty-request-form";
+import FacultyJoinForm from "@/components/Services/faculty-join-form";
 import { Phone, Mail, ArrowRight } from "lucide-react";
 import { useState } from "react";
 
-export function ServiceCard({ service }) {
+export default function ServiceCard({ service }) {
   const [open, setOpen] = useState(false);
 
   const renderForm = () => {

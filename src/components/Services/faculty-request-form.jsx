@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { Loader2, CheckCircle } from "lucide-react"
 
-export function FacultyRequestForm({ setOpen }) {
+export default function FacultyRequestForm({ setOpen }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 

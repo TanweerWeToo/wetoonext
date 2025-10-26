@@ -1,4 +1,4 @@
-import { ServicesGrid } from "@/pages/Services/services-grid"
+import ServicesGrid from "@/components/Services/services-grid"
 
 export default function Services() {
   return (

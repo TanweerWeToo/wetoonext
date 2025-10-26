@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
 import { Loader2, CheckCircle } from "lucide-react"
 
-export function FacultyJoinForm({ setOpen }) {
+export default function FacultyJoinForm({ setOpen }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 

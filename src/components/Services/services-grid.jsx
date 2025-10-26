@@ -1,4 +1,4 @@
-import { ServiceCard } from "@/pages/Services/service-card";
+import ServiceCard from "@/components/Services/service-card";
 import {
   Briefcase,
   Users,
@@ -90,7 +90,7 @@ const services = [
   },
 ];
 
-export function ServicesGrid() {
+export default function ServicesGrid() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {services.map((service) => (
