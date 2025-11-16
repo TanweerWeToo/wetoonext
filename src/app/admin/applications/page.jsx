@@ -354,8 +354,8 @@ export default function ApplicationsPage() {
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Application Details</DialogTitle>
-            <DialogDescription>
-              Complete information about this application
+          <DialogDescription>
+Complete information about this application
             </DialogDescription>
           </DialogHeader>
           {selectedApplication && (

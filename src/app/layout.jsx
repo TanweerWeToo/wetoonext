@@ -1,8 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import Header from "@/pages/Header/Header";
-import Footer from "@/pages/Footer/Footer";
+import PublicLayout from "@/components/PublicLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +27,7 @@ export default function RootLayout({ children }) {
           fontFamily: 'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
         }}
       >
-        <Header />
-        {children}
-        <Footer />
+        <PublicLayout>{children}</PublicLayout>
         <Toaster position="top-right" richColors />
       </body>
     </html>
