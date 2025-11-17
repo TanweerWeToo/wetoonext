@@ -15,6 +15,7 @@ import {
   LogOut,
   User,
   ChevronRight,
+  Youtube,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -43,14 +44,24 @@ const menuItems = [
     icon: ImageIcon,
   },
   {
-    title: "Testimonials",
+    title: "Video Testimonials",
     href: "/admin/testimonials",
     icon: MessageSquare,
   },
   {
+    title: "Text Testimonials",
+    href: "/admin/text-testimonials",
+    icon: MessageSquare,
+  },
+  {
     title: "Program Impact",
-    href: "/admin/program-impact",
+    href: "/admin/program-impact-new",
     icon: TrendingUp,
+  },
+  {
+    title: "YouTube Stats",
+    href: "/admin/youtube-stats",
+    icon: Youtube,
   },
 ];
 

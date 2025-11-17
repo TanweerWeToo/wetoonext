@@ -1,4 +1,4 @@
-// Admin API for managing program impact metrics
+// Admin API for managing program impact metrics (4 fixed entries)
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { getAdminFromToken } from '@/lib/auth';
@@ -51,7 +51,7 @@ export async function PUT(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, metricName, metricValue } = await request.json();
+    const { id, title, value, description } = await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -60,10 +60,18 @@ export async function PUT(request) {
       );
     }
 
+    // Ensure we only update one of the 4 fixed entries
+    if (id < 1 || id > 4) {
+      return NextResponse.json(
+        { success: false, message: 'Invalid metric ID. Only IDs 1-4 are allowed.' },
+        { status: 400 }
+      );
+    }
+
     await query(
-      `UPDATE program_impact SET metric_name = ?, metric_value = ? 
+      `UPDATE program_impact SET title = ?, value = ?, description = ? 
        WHERE id = ?`,
-      [metricName, metricValue, id]
+      [title, value, description || '', id]
     );
 
     return NextResponse.json({

@@ -11,7 +11,8 @@ export default function AdminDashboard() {
     applications: 0,
     courses: 0,
     gallery: 0,
-    testimonials: 0,
+    videoTestimonials: 0,
+    textTestimonials: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,25 +22,28 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     try {
-      const [applicationsRes, coursesRes, galleryRes, testimonialsRes] = await Promise.all([
+      const [applicationsRes, coursesRes, galleryRes, videoTestimonialsRes, textTestimonialsRes] = await Promise.all([
         fetch("/api/admin/applications"),
         fetch("/api/admin/courses"),
         fetch("/api/admin/gallery"),
         fetch("/api/admin/testimonials"),
+        fetch("/api/admin/text-testimonials"),
       ]);
 
-      const [applicationsData, coursesData, galleryData, testimonialsData] = await Promise.all([
+      const [applicationsData, coursesData, galleryData, videoTestimonialsData, textTestimonialsData] = await Promise.all([
         applicationsRes.json(),
         coursesRes.json(),
         galleryRes.json(),
-        testimonialsRes.json(),
+        videoTestimonialsRes.json(),
+        textTestimonialsRes.json(),
       ]);
 
       setStats({
         applications: applicationsData.success ? applicationsData.applications.length : 0,
         courses: coursesData.success ? coursesData.courses.length : 0,
         gallery: galleryData.success ? galleryData.images.length : 0,
-        testimonials: testimonialsData.success ? testimonialsData.testimonials.length : 0,
+        videoTestimonials: videoTestimonialsData.success ? videoTestimonialsData.testimonials.length : 0,
+        textTestimonials: textTestimonialsData.success ? textTestimonialsData.testimonials.length : 0,
       });
     } catch (error) {
       console.error("Failed to fetch stats:", error);
@@ -77,13 +81,22 @@ export default function AdminDashboard() {
       iconColor: "text-purple-600",
     },
     {
-      title: "Testimonials",
-      value: stats.testimonials,
+      title: "Video Testimonials",
+      value: stats.videoTestimonials,
       icon: MessageSquare,
       href: "/admin/testimonials",
       gradient: "from-orange-500 to-orange-600",
       iconBg: "bg-orange-50",
       iconColor: "text-orange-600",
+    },
+    {
+      title: "Text Testimonials",
+      value: stats.textTestimonials,
+      icon: MessageSquare,
+      href: "/admin/text-testimonials",
+      gradient: "from-pink-500 to-pink-600",
+      iconBg: "bg-pink-50",
+      iconColor: "text-pink-600",
     },
   ];
 
@@ -113,7 +126,7 @@ export default function AdminDashboard() {
       bgColor: "bg-purple-50",
     },
     {
-      title: "Testimonials",
+      title: "Video Testimonials",
       description: "Manage YouTube videos",
       icon: MessageSquare,
       href: "/admin/testimonials",
@@ -121,10 +134,18 @@ export default function AdminDashboard() {
       bgColor: "bg-orange-50",
     },
     {
+      title: "Text Testimonials",
+      description: "Manage text reviews",
+      icon: MessageSquare,
+      href: "/admin/text-testimonials",
+      color: "text-pink-600",
+      bgColor: "bg-pink-50",
+    },
+    {
       title: "Program Impact",
       description: "Update success metrics",
       icon: TrendingUp,
-      href: "/admin/program-impact",
+      href: "/admin/program-impact-new",
       color: "text-indigo-600",
       bgColor: "bg-indigo-50",
     },
@@ -151,7 +172,7 @@ export default function AdminDashboard() {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {statCards.map((card, index) => {
           const Icon = card.icon;
           return (
