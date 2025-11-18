@@ -35,7 +35,7 @@ export default function TestimonialsPage() {
   const [testimonialToDelete, setTestimonialToDelete] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
-    videoId: "",
+    videoUrl: "",
     displayOrder: 0,
     isActive: true,
   });
@@ -65,7 +65,7 @@ export default function TestimonialsPage() {
   const resetForm = () => {
     setFormData({
       title: "",
-      videoId: "",
+      videoUrl: "",
       displayOrder: 0,
       isActive: true,
     });
@@ -77,7 +77,7 @@ export default function TestimonialsPage() {
 
     const payload = {
       title: formData.title,
-      videoId: formData.videoId,
+      videoUrl: formData.videoUrl,
       displayOrder: parseInt(formData.displayOrder) || 0,
       isActive: formData.isActive,
     };
@@ -120,7 +120,7 @@ export default function TestimonialsPage() {
     setEditingTestimonial(testimonial);
     setFormData({
       title: testimonial.title,
-      videoId: testimonial.video_id,
+      videoUrl: testimonial.video_url || `https://www.youtube.com/watch?v=${testimonial.video_id}`,
       displayOrder: testimonial.display_order || 0,
       isActive: testimonial.is_active,
     });
@@ -218,77 +218,87 @@ export default function TestimonialsPage() {
                     <TableHead>ID</TableHead>
                     <TableHead>Preview</TableHead>
                     <TableHead>Title</TableHead>
-                    <TableHead>Video ID</TableHead>
+                    <TableHead>Video URL</TableHead>
                     <TableHead>Order</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {testimonials.map((testimonial) => (
-                    <TableRow key={testimonial.id}>
-                      <TableCell className="font-medium">
-                        {testimonial.id}
-                      </TableCell>
-                      <TableCell>
-                        <a
-                          href={`https://www.youtube.com/watch?v=${testimonial.video_id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block relative w-24 h-16 rounded overflow-hidden group"
-                        >
-                          <img
-                            src={`https://img.youtube.com/vi/${testimonial.video_id}/mqdefault.jpg`}
-                            alt={testimonial.title}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Play className="w-6 h-6 text-white" />
+                  {testimonials.map((testimonial) => {
+                    const videoUrl = testimonial.video_url || `https://www.youtube.com/watch?v=${testimonial.video_id}`;
+                    const videoId = extractVideoId(videoUrl);
+                    
+                    return (
+                      <TableRow key={testimonial.id}>
+                        <TableCell className="font-medium">
+                          {testimonial.id}
+                        </TableCell>
+                        <TableCell>
+                          <a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block relative w-24 h-16 rounded overflow-hidden group"
+                          >
+                            <img
+                              src={`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`}
+                              alt={testimonial.title}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Play className="w-6 h-6 text-white" />
+                            </div>
+                          </a>
+                        </TableCell>
+                        <TableCell>{testimonial.title}</TableCell>
+                        <TableCell>
+                          <a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:text-blue-800 hover:underline max-w-xs truncate block"
+                          >
+                            {videoUrl}
+                          </a>
+                        </TableCell>
+                        <TableCell>{testimonial.display_order}</TableCell>
+                        <TableCell>
+                          <Badge
+                            className={
+                              testimonial.is_active
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }
+                          >
+                            {testimonial.is_active ? "Active" : "Inactive"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleEdit(testimonial)}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-red-600 hover:text-red-700"
+                              onClick={() => {
+                                setTestimonialToDelete(testimonial);
+                                setIsDeleteDialogOpen(true);
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
-                        </a>
-                      </TableCell>
-                      <TableCell>{testimonial.title}</TableCell>
-                      <TableCell>
-                        <code className="text-xs bg-gray-100 px-2 py-1 rounded">
-                          {testimonial.video_id}
-                        </code>
-                      </TableCell>
-                      <TableCell>{testimonial.display_order}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            testimonial.is_active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }
-                        >
-                          {testimonial.is_active ? "Active" : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(testimonial)}
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => {
-                              setTestimonialToDelete(testimonial);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
@@ -324,28 +334,31 @@ export default function TestimonialsPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="videoId">YouTube Video ID or URL *</Label>
+              <Label htmlFor="videoUrl">YouTube Video URL *</Label>
               <Input
-                id="videoId"
-                value={formData.videoId}
+                id="videoUrl"
+                value={formData.videoUrl}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    videoId: extractVideoId(e.target.value),
+                    videoUrl: e.target.value,
                   })
                 }
-                placeholder="CzIH8M0a3SI or full YouTube URL"
+                placeholder="https://www.youtube.com/watch?v=CzIH8M0a3SI"
                 required
               />
               <p className="text-xs text-gray-500">
-                Enter the video ID or paste the full YouTube URL
+                Paste the full YouTube URL (supports watch, youtu.be, and shorts URLs)
               </p>
-              {formData.videoId && (
+              {formData.videoUrl && (
                 <div className="mt-2 border rounded-lg overflow-hidden">
                   <img
-                    src={`https://img.youtube.com/vi/${formData.videoId}/mqdefault.jpg`}
+                    src={`https://img.youtube.com/vi/${extractVideoId(formData.videoUrl)}/mqdefault.jpg`}
                     alt="Video preview"
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/320x180?text=Invalid+URL';
+                    }}
                   />
                 </div>
               )}

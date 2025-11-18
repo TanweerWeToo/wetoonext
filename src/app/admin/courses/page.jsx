@@ -50,6 +50,8 @@ export default function CoursesPage() {
     category: "",
     isActive: true,
   });
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchCourses();
@@ -84,24 +86,74 @@ export default function CoursesPage() {
       category: "",
       isActive: true,
     });
+    setSelectedFile(null);
     setEditingCourse(null);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Please select a valid image file (JPEG, PNG, GIF, or WebP)');
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+      
+      setSelectedFile(file);
+      // Clear image URL if file is selected
+      setFormData({ ...formData, imageUrl: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      title: formData.title,
-      level: formData.level,
-      startDate: formData.startDate,
-      year: formData.year,
-      fee: formData.fee,
-      imageUrl: formData.imageUrl,
-      category: formData.category,
-      isActive: formData.isActive,
-    };
-
     try {
+      let imageUrl = formData.imageUrl;
+
+      // If file is selected, upload it first
+      if (selectedFile) {
+        setIsUploading(true);
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', selectedFile);
+        uploadFormData.append('folder', 'courses');
+
+        const uploadResponse = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          body: uploadFormData,
+        });
+
+        const uploadData = await uploadResponse.json();
+
+        if (!uploadData.success) {
+          toast.error(uploadData.message || 'Failed to upload image');
+          setIsUploading(false);
+          return;
+        }
+
+        imageUrl = uploadData.url;
+        toast.success('Image uploaded successfully');
+        setIsUploading(false);
+      }
+
+      const payload = {
+        title: formData.title,
+        level: formData.level,
+        startDate: formData.startDate,
+        year: formData.year,
+        fee: formData.fee,
+        imageUrl: imageUrl,
+        category: formData.category,
+        isActive: formData.isActive,
+      };
+
       const url = "/api/admin/courses";
       const method = editingCourse ? "PUT" : "POST";
 
@@ -132,6 +184,7 @@ export default function CoursesPage() {
     } catch (error) {
       console.error("Submit error:", error);
       toast.error("An error occurred");
+      setIsUploading(false);
     }
   };
 
@@ -388,15 +441,71 @@ export default function CoursesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
-                value={formData.imageUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, imageUrl: e.target.value })
-                }
-                placeholder="/Landing/course-image.jpg"
-              />
+              <Label>Course Image (Optional)</Label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                <div className="space-y-3">
+                  <div>
+                    <Label htmlFor="courseFileUpload" className="text-sm font-medium">
+                      Upload Image File
+                    </Label>
+                    <Input
+                      id="courseFileUpload"
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                      onChange={handleFileChange}
+                      disabled={isUploading}
+                      className="mt-1"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Max 5MB • JPEG, PNG, GIF, WebP
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 border-t border-gray-300"></div>
+                    <span className="text-xs text-gray-500">OR</span>
+                    <div className="flex-1 border-t border-gray-300"></div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="imageUrl" className="text-sm font-medium">
+                      Image URL
+                    </Label>
+                    <Input
+                      id="imageUrl"
+                      value={formData.imageUrl}
+                      onChange={(e) => {
+                        setFormData({ ...formData, imageUrl: e.target.value });
+                        setSelectedFile(null);
+                      }}
+                      placeholder="https://example.com/course-image.jpg"
+                      disabled={selectedFile !== null || isUploading}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {selectedFile && (
+                <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-sm text-blue-800">
+                    📎 Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                  </p>
+                </div>
+              )}
+              
+              {(formData.imageUrl || selectedFile) && (
+                <div className="mt-2 border rounded-lg overflow-hidden">
+                  <img
+                    src={selectedFile ? URL.createObjectURL(selectedFile) : formData.imageUrl}
+                    alt="Preview"
+                    className="w-full h-32 object-cover"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -425,8 +534,8 @@ export default function CoursesPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit">
-                {editingCourse ? "Update Course" : "Create Course"}
+              <Button type="submit" disabled={isUploading}>
+                {isUploading ? "Uploading..." : editingCourse ? "Update Course" : "Create Course"}
               </Button>
             </DialogFooter>
           </form>

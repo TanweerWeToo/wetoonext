@@ -4,6 +4,23 @@ import { query } from '@/lib/db';
 import { getAdminFromToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
+// Helper function to extract video ID from YouTube URL
+function extractVideoId(input) {
+  const patterns = [
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/,
+    /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?]+)/,
+    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^?]+)/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = input.match(pattern);
+    if (match) return match[1];
+  }
+
+  // If no pattern matches, assume it's already a video ID
+  return input;
+}
+
 // GET all testimonials
 export async function GET(request) {
   try {
@@ -51,19 +68,22 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { title, videoId, displayOrder } = await request.json();
+    const { title, videoUrl, displayOrder } = await request.json();
 
-    if (!title || !videoId) {
+    if (!title || !videoUrl) {
       return NextResponse.json(
-        { success: false, message: 'Title and Video ID are required' },
+        { success: false, message: 'Title and Video URL are required' },
         { status: 400 }
       );
     }
 
+    // Extract video ID from URL
+    const videoId = extractVideoId(videoUrl);
+
     const result = await query(
-      `INSERT INTO testimonials (title, video_id, display_order) 
-       VALUES (?, ?, ?)`,
-      [title, videoId, displayOrder || 0]
+      `INSERT INTO testimonials (title, video_id, video_url, display_order) 
+       VALUES (?, ?, ?, ?)`,
+      [title, videoId, videoUrl, displayOrder || 0]
     );
 
     return NextResponse.json({
@@ -95,7 +115,7 @@ export async function PUT(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, title, videoId, displayOrder, isActive } = await request.json();
+    const { id, title, videoUrl, displayOrder, isActive } = await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -104,10 +124,13 @@ export async function PUT(request) {
       );
     }
 
+    // Extract video ID from URL
+    const videoId = extractVideoId(videoUrl);
+
     await query(
-      `UPDATE testimonials SET title = ?, video_id = ?, display_order = ?, is_active = ? 
+      `UPDATE testimonials SET title = ?, video_id = ?, video_url = ?, display_order = ?, is_active = ? 
        WHERE id = ?`,
-      [title, videoId, displayOrder || 0, isActive !== undefined ? isActive : true, id]
+      [title, videoId, videoUrl, displayOrder || 0, isActive !== undefined ? isActive : true, id]
     );
 
     return NextResponse.json({
