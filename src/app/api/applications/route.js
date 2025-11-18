@@ -6,21 +6,20 @@ export async function POST(request) {
   try {
     const data = await request.json();
 
-    const {
-      fullName,
-      fatherName,
-      email,
-      mobile,
-      dob,
-      state,
-      degree,
-      subject,
-      gradYear,
-      optionalPaper,
-      comments,
-      courseName,
-      paid
-    } = data;
+    // Support both camelCase and snake_case field names for backward compatibility
+    const fullName = data.fullName || data.full_name;
+    const fatherName = data.fatherName || data.father_name;
+    const email = data.email;
+    const mobile = data.mobile;
+    const dob = data.dob;
+    const state = data.state;
+    const degree = data.degree;
+    const subject = data.subject;
+    const gradYear = data.gradYear || data.grad_year;
+    const optionalPaper = data.optionalPaper || data.optional_paper;
+    const comments = data.comments;
+    const courseName = data.courseName || data.course_name;
+    const paid = data.paid;
 
     // Validation
     if (!fullName || !email || !mobile || !courseName) {

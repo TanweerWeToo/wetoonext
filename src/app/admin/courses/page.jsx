@@ -52,6 +52,8 @@ export default function CoursesPage() {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [customCategory, setCustomCategory] = useState("");
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   useEffect(() => {
     fetchCourses();
@@ -87,6 +89,8 @@ export default function CoursesPage() {
       isActive: true,
     });
     setSelectedFile(null);
+    setCustomCategory("");
+    setShowCustomCategory(false);
     setEditingCourse(null);
   };
 
@@ -143,6 +147,9 @@ export default function CoursesPage() {
         setIsUploading(false);
       }
 
+      // Use custom category if "others" is selected
+      const finalCategory = formData.category === 'others' ? customCategory : formData.category;
+
       const payload = {
         title: formData.title,
         level: formData.level,
@@ -150,7 +157,7 @@ export default function CoursesPage() {
         year: formData.year,
         fee: formData.fee,
         imageUrl: imageUrl,
-        category: formData.category,
+        category: finalCategory,
         isActive: formData.isActive,
       };
 
@@ -190,16 +197,40 @@ export default function CoursesPage() {
 
   const handleEdit = (course) => {
     setEditingCourse(course);
-    setFormData({
-      title: course.title,
-      level: course.level,
-      startDate: course.start_date || "",
-      year: course.year || "",
-      fee: course.fee || "",
-      imageUrl: course.image_url || "",
-      category: course.category,
-      isActive: course.is_active,
-    });
+    
+    // Check if category is one of the predefined options
+    const predefinedCategories = ['rca', 'upsc', 'bpsc'];
+    const isPredefined = predefinedCategories.includes(course.category.toLowerCase());
+    
+    if (!isPredefined) {
+      // If custom category, set to "others" and store the actual value
+      setFormData({
+        title: course.title,
+        level: course.level,
+        startDate: course.start_date || "",
+        year: course.year || "",
+        fee: course.fee || "",
+        imageUrl: course.image_url || "",
+        category: 'others',
+        isActive: course.is_active,
+      });
+      setCustomCategory(course.category);
+      setShowCustomCategory(true);
+    } else {
+      setFormData({
+        title: course.title,
+        level: course.level,
+        startDate: course.start_date || "",
+        year: course.year || "",
+        fee: course.fee || "",
+        imageUrl: course.image_url || "",
+        category: course.category,
+        isActive: course.is_active,
+      });
+      setCustomCategory("");
+      setShowCustomCategory(false);
+    }
+    
     setIsDialogOpen(true);
   };
 
@@ -388,9 +419,15 @@ export default function CoursesPage() {
                 <Label htmlFor="category">Category *</Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, category: value })
-                  }
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, category: value });
+                    if (value === 'others') {
+                      setShowCustomCategory(true);
+                    } else {
+                      setShowCustomCategory(false);
+                      setCustomCategory("");
+                    }
+                  }}
                   required
                 >
                   <SelectTrigger>
@@ -400,9 +437,26 @@ export default function CoursesPage() {
                     <SelectItem value="rca">RCA</SelectItem>
                     <SelectItem value="upsc">UPSC</SelectItem>
                     <SelectItem value="bpsc">BPSC</SelectItem>
+                    <SelectItem value="others">Others (Custom)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
+
+              {showCustomCategory && (
+                <div className="space-y-2">
+                  <Label htmlFor="customCategory">Custom Category *</Label>
+                  <Input
+                    id="customCategory"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    placeholder="Enter custom category name"
+                    required
+                  />
+                  <p className="text-xs text-gray-500">
+                    Enter a custom category name (e.g., "SSC", "Railway", etc.)
+                  </p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="startDate">Start Date</Label>
