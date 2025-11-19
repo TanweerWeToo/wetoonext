@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "WETOO MEDIA - IAS | UPSC, BPSC, RCA Preparation",
   description: "Your trusted digital mentor for UPSC, SSC & competitive exam success - empowering aspirants through free guidance, resources, and inspiration.",
+  icons: {
+    icon: "/wetoo-logo.jpg",
+  },
 };
 
 export default function RootLayout({ children }) {
