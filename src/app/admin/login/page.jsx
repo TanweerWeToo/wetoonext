@@ -149,7 +149,7 @@ export default function AdminLogin() {
               </Button>
             </form>
 
-            <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
+            {/* <div className="mt-6 p-4 bg-primary/5 rounded-lg border border-primary/10">
               <p className="text-sm text-center text-muted-foreground">
                 🔐 Default credentials for testing:<br />
                 <span className="font-mono text-xs mt-1 block">
@@ -157,7 +157,7 @@ export default function AdminLogin() {
                   Password: Admin@123
                 </span>
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 
