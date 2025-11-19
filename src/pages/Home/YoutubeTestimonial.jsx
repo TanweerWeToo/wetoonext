@@ -3,90 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
 
-// Sample YouTube Shorts data - replace with your actual data
-const shortsData = [
-  {
-    id: 1,
-    title: "Testimonial 1",
-    videoId: "CzIH8M0a3SI",
-  },
-  {
-    id: 2,
-    title: "Testimonial 2",
-    videoId: "syX-jb7zS1E",
-  },
-  {
-    id: 5,
-    title: "Testimonial 5",
-    videoId: "UiNWj3vWwzo",
-  },
-  {
-    id: 6,
-    title: "Testimonial 6",
-    videoId: "NrCTgYbihwc",
-  },
-  //   {
-  //     id: 7,
-  //     title: "Testimonial 7",
-  //     videoId: "jE5A2c5dIBs",
-  //   },
-  {
-    id: 8,
-    title: "Testimonial 8",
-    videoId: "hg328rKXDlM",
-  },
-  {
-    id: 9,
-    title: "Testimonial 9",
-    videoId: "YuYHGi12QQs",
-  },
-  {
-    id: 10,
-    title: "Testimonial 10",
-    videoId: "mAIFrJKN-p8",
-  },
-  //   {
-  //     id: 11,
-  //     title: "Testimonial 11",
-  //     videoId: "gItm_vsMRl4",
-  //   },
-  {
-    id: 12,
-    title: "Testimonial 12",
-    videoId: "Ilnpbp_npHY",
-  },
-  {
-    id: 13,
-    title: "Testimonial 13",
-    videoId: "LpELoPdVeTM",
-  },
-  {
-    id: 14,
-    title: "Testimonial 14",
-    videoId: "fpPwX9ELngE",
-  },
-  {
-    id: 15,
-    title: "Testimonial 15",
-    videoId: "OMnoj9xFqSM",
-  },
-  {
-    id: 16,
-    title: "Testimonial 16",
-    videoId: "_yHYX-hgjDA",
-  },
-  //   {
-  //     id: 3,
-  //     title: "Testimonial 3",
-  //     videoId: "46m4t5dS3p8",
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Testimonial 4",
-  //     videoId: "Jg0Ydw7uCMY",
-  //   },
-];
-
 const YoutubeShortCard = ({ short, isActive, onClick }) => {
   return (
     <div
@@ -98,7 +14,7 @@ const YoutubeShortCard = ({ short, isActive, onClick }) => {
             : "scale-90 opacity-70 hover:opacity-90 hover:scale-95 z-0"
         }`}
     >
-      <div className="relative rounded-xl overflow-hidden shadow-xl aspect-[9/16] bg-black">
+      <div className="relative rounded-xl overflow-hidden shadow-xl aspect-9/16 bg-black">
         {/* Thumbnail */}
         <img
           src={`https://img.youtube.com/vi/${short.videoId}/maxresdefault.jpg`}
@@ -117,7 +33,7 @@ const YoutubeShortCard = ({ short, isActive, onClick }) => {
               isActive ? "animate-shimmer" : ""
             }`}
           >
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+            <div className="absolute inset-0 rounded-full bg-linear-to-r from-transparent via-white/30 to-transparent"></div>
           </div>
 
           {/* Middle glow */}
@@ -145,6 +61,33 @@ const YoutubeTestimonials = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const carouselRef = useRef(null);
+  const [shortsData, setShortsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch testimonials from API
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/testimonials');
+        const data = await response.json();
+        if (data.success) {
+          // Transform API data to match component structure
+          const transformedData = data.testimonials.map((testimonial) => ({
+            id: testimonial.id,
+            title: testimonial.title,
+            videoId: testimonial.video_id,
+          }));
+          setShortsData(transformedData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
 
   // Responsive handling
   useEffect(() => {
@@ -171,7 +114,7 @@ const YoutubeTestimonials = () => {
     if (activeIndex > maxIndex) {
       setActiveIndex(maxIndex);
     }
-  }, [visibleCount, activeIndex]);
+  }, [visibleCount, activeIndex, shortsData.length]);
 
   const nextSlide = () => {
     if (isAnimating) return;
@@ -266,7 +209,7 @@ const YoutubeTestimonials = () => {
   const visibleItems = getVisibleItems();
 
   return (
-    <section className="py-20 px-4 bg-gradient-to-b from-[#2A4E6E]/10 to-white overflow-hidden relative">
+    <section className="py-20 px-4 bg-linear-to-b from-[#2A4E6E]/10 to-white overflow-hidden relative">
       {/* Background decorative elements */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-[#CC5500]/5 blur-3xl"></div>
@@ -283,10 +226,25 @@ const YoutubeTestimonials = () => {
             What Our Students Say
           </h2>
           <div className="w-24 h-1.5 bg-[#CC5500] mx-auto mb-8 rounded-full animate-expand"></div>
-          <p className="text-[#333333] max-w-2xl mx-auto text-lg mb-8 animate-fadeIn">
+          <p className="text-text max-w-2xl mx-auto text-lg mb-8 animate-fadeIn">
             Quick videos showcasing our students' success stories
           </p>
         </div>
+
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-20">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#2A4E6E] mx-auto"></div>
+            <p className="mt-6 text-[#2A4E6E] text-lg">Loading testimonials...</p>
+          </div>
+        ) : shortsData.length === 0 ? (
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">🎥</div>
+            <p className="text-[#2A4E6E] text-xl font-medium">No testimonials available</p>
+            <p className="text-gray-600 mt-2">Check back soon for student success stories!</p>
+          </div>
+        ) : (
+          <>
 
         <div
           className="relative py-10 cursor-grab active:cursor-grabbing"
@@ -383,6 +341,8 @@ const YoutubeTestimonials = () => {
             );
           })}
         </div>
+        </>
+        )}
       </div>
     </section>
   );

@@ -13,9 +13,55 @@ import {
 import { motion } from "framer-motion";
 import Testimonial from "@/pages/Home/Testimonial";
 
+// Icon and color mapping (icons can't be stored in database)
+const iconMap = [
+  <CheckCircle key="icon-1" className="h-8 w-8" />,
+  <Award key="icon-2" className="h-8 w-8" />,
+  <Users key="icon-3" className="h-8 w-8" />,
+  <BookOpen key="icon-4" className="h-8 w-8" />,
+];
+
+const colorMap = [
+  "from-primary to-primary/70",
+  "from-secondary to-secondary/70",
+  "from-accent to-accent/70",
+  "from-primary/80 to-secondary/80",
+];
+
 const ProgramImpact = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
+  const [impactStats, setImpactStats] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch program impact metrics from API
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      try {
+        const response = await fetch('/api/program-impact');
+        const data = await response.json();
+        
+        if (data.success && data.metrics) {
+          // Transform data and add icons/colors
+          const transformedMetrics = data.metrics.map((metric, index) => ({
+            icon: iconMap[index % iconMap.length],
+            title: metric.title,
+            description: metric.description,
+            value: metric.value,
+            color: colorMap[index % colorMap.length],
+          }));
+          
+          setImpactStats(transformedMetrics);
+        }
+      } catch (error) {
+        console.error('Failed to fetch program impact metrics:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMetrics();
+  }, []);
 
   useEffect(() => {
     setIsVisible(true);
@@ -24,41 +70,6 @@ const ProgramImpact = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, []);
-
-  const impactStats = [
-    {
-      icon: <CheckCircle className="h-8 w-8" />,
-      title: "Highest Success Rate",
-      description:
-        "Many candidates have successfully cleared RCA interviews with WeToo Media's guidance.",
-      value: "98%",
-      color: "from-primary to-primary/70",
-    },
-    {
-      icon: <Award className="h-8 w-8" />,
-      title: "Candidates Selected",
-      description:
-        "Proven track record of success with multiple testimonials in 2024.",
-      value: "17+",
-      color: "from-secondary to-secondary/70",
-    },
-    {
-      icon: <Users className="h-8 w-8" />,
-      title: "Aspirants Benefited",
-      description:
-        "Students have relied on WeToo Media for interview preparation and expert coaching.",
-      value: "1000+",
-      color: "from-accent to-accent/70",
-    },
-    {
-      icon: <BookOpen className="h-8 w-8" />,
-      title: "Comprehensive Guidance",
-      description:
-        "Supporting candidates from written exams to interview success for RCA & UPSC.",
-      value: "100%",
-      color: "from-primary/80 to-secondary/80",
-    },
-  ];
 
   const testimonials = [
     {
@@ -106,7 +117,7 @@ const ProgramImpact = () => {
   };
 
   return (
-    <section id="testimonials" className="py-20 relative overflow-hidden bg-gradient-to-b from-background to-background/90">
+    <section id="testimonials" className="py-20 relative overflow-hidden bg-linear-to-b from-background to-background/90">
       {/* Background Elements */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full translate-x-1/3 translate-y-1/3"></div>
@@ -126,7 +137,7 @@ const ProgramImpact = () => {
               <Star className="h-4 w-4 fill-primary text-primary" />
             </div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-primary via-secondary to-accent bg-clip-text text-transparent mb-6">
             Our Program Impact
           </h2>
           <p className="text-text text-lg max-w-2xl mx-auto">
@@ -135,40 +146,54 @@ const ProgramImpact = () => {
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isVisible ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
-        >
-          {impactStats.map((stat, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              whileHover={{ y: -5 }}
-            >
-              <Card className="border-none overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full">
-                <div className={`h-2 bg-gradient-to-r ${stat.color}`}></div>
-                <CardContent className="pt-8 pb-8">
-                  <div className="flex flex-col items-center text-center">
-                    {/* <div
-                      className={`mb-6 rounded-full p-4 bg-gradient-to-br ${stat.color} text-white`}
-                    >
-                      {stat.icon}
-                    </div> */}
-                    <div className="text-4xl font-bold text-primary mb-2">
-                      {stat.value}
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-16 mb-16">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto"></div>
+            <p className="mt-6 text-text text-lg">Loading program impact...</p>
+          </div>
+        ) : impactStats.length === 0 ? (
+          <div className="text-center py-16 mb-16">
+            <div className="text-6xl mb-4">📊</div>
+            <p className="text-text text-xl font-medium">No metrics available</p>
+            <p className="text-text/60 mt-2">Check back soon for program impact statistics!</p>
+          </div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={isVisible ? "visible" : "hidden"}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
+          >
+            {impactStats.map((stat, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+              >
+                <Card className="border-none overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                  <div className={`h-2 bg-linear-to-r ${stat.color}`}></div>
+                  <CardContent className="pt-8 pb-8">
+                    <div className="flex flex-col items-center text-center">
+                      {/* <div
+                        className={`mb-6 rounded-full p-4 bg-linear-to-br ${stat.color} text-white`}
+                      >
+                        {stat.icon}
+                      </div> */}
+                      <div className="text-4xl font-bold text-primary mb-2">
+                        {stat.value}
+                      </div>
+                      <h3 className="text-xl font-bold text-primary/90 mb-3">
+                        {stat.title}
+                      </h3>
+                      <p className="text-text/80">{stat.description}</p>
                     </div>
-                    <h3 className="text-xl font-bold text-primary/90 mb-3">
-                      {stat.title}
-                    </h3>
-                    <p className="text-text/80">{stat.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         {/* Testimonials Section */}
         <motion.div
@@ -187,8 +212,8 @@ const ProgramImpact = () => {
           transition={{ delay: 0.7, duration: 0.7 }}
           className="relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 rounded-2xl transform rotate-1 scale-[1.03] opacity-20"></div>
-          <div className="bg-gradient-to-br from-primary to-primary/90 rounded-2xl p-10 md:p-12 text-white text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute inset-0 bg-linear-to-br from-primary to-primary/80 rounded-2xl transform rotate-1 scale-[1.03] opacity-20"></div>
+          <div className="bg-linear-to-br from-primary to-primary/90 rounded-2xl p-10 md:p-12 text-white text-center relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 left-0 w-full h-full">
               <div className="absolute top-0 left-0 w-40 h-40 bg-white/5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
               <div className="absolute bottom-0 right-0 w-60 h-60 bg-white/5 rounded-full translate-x-1/3 translate-y-1/3"></div>

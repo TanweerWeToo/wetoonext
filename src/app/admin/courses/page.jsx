@@ -49,6 +49,7 @@ export default function CoursesPage() {
     imageUrl: "",
     category: "",
     isActive: true,
+    connected: false,
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -87,6 +88,7 @@ export default function CoursesPage() {
       imageUrl: "",
       category: "",
       isActive: true,
+      connected: false,
     });
     setSelectedFile(null);
     setCustomCategory("");
@@ -159,6 +161,7 @@ export default function CoursesPage() {
         imageUrl: imageUrl,
         category: finalCategory,
         isActive: formData.isActive,
+        connected: formData.connected,
       };
 
       const url = "/api/admin/courses";
@@ -213,6 +216,7 @@ export default function CoursesPage() {
         imageUrl: course.image_url || "",
         category: 'others',
         isActive: course.is_active,
+        connected: course.connected === 1,
       });
       setCustomCategory(course.category);
       setShowCustomCategory(true);
@@ -226,6 +230,7 @@ export default function CoursesPage() {
         imageUrl: course.image_url || "",
         category: course.category,
         isActive: course.is_active,
+        connected: course.connected === 1,
       });
       setCustomCategory("");
       setShowCustomCategory(false);
@@ -310,6 +315,7 @@ export default function CoursesPage() {
                     <TableHead>Start Date</TableHead>
                     <TableHead>Fee</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Form</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -342,6 +348,17 @@ export default function CoursesPage() {
                           }
                         >
                           {course.is_active ? "Active" : "Inactive"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={
+                            course.connected
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-orange-100 text-orange-800"
+                          }
+                        >
+                          {course.connected ? "New Popup" : "Old Form"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
@@ -562,19 +579,36 @@ export default function CoursesPage() {
               )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={formData.isActive}
-                onChange={(e) =>
-                  setFormData({ ...formData, isActive: e.target.checked })
-                }
-                className="w-4 h-4"
-              />
-              <Label htmlFor="isActive" className="cursor-pointer">
-                Active (visible on website)
-              </Label>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) =>
+                    setFormData({ ...formData, isActive: e.target.checked })
+                  }
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="isActive" className="cursor-pointer">
+                  Active (visible on website)
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="connected"
+                  checked={formData.connected}
+                  onChange={(e) =>
+                    setFormData({ ...formData, connected: e.target.checked })
+                  }
+                  className="w-4 h-4"
+                />
+                <Label htmlFor="connected" className="cursor-pointer">
+                  Use ApplicationPopup (if unchecked, shows old registration form)
+                </Label>
+              </div>
             </div>
 
             <DialogFooter>

@@ -51,7 +51,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { title, level, startDate, year, fee, imageUrl, category } = await request.json();
+    const { title, level, startDate, year, fee, imageUrl, category, connected } = await request.json();
 
     if (!title || !level || !category) {
       return NextResponse.json(
@@ -61,9 +61,9 @@ export async function POST(request) {
     }
 
     const result = await query(
-      `INSERT INTO courses (title, level, start_date, year, fee, image_url, category) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [title, level, startDate, year, fee, imageUrl, category]
+      `INSERT INTO courses (title, level, start_date, year, fee, image_url, category, connected) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [title, level, startDate, year, fee, imageUrl, category, connected !== undefined ? connected : 0]
     );
 
     return NextResponse.json({
@@ -95,7 +95,7 @@ export async function PUT(request) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id, title, level, startDate, year, fee, imageUrl, category, isActive } = await request.json();
+    const { id, title, level, startDate, year, fee, imageUrl, category, isActive, connected } = await request.json();
 
     if (!id) {
       return NextResponse.json(
@@ -105,9 +105,9 @@ export async function PUT(request) {
     }
 
     await query(
-      `UPDATE courses SET title = ?, level = ?, start_date = ?, year = ?, fee = ?, image_url = ?, category = ?, is_active = ? 
+      `UPDATE courses SET title = ?, level = ?, start_date = ?, year = ?, fee = ?, image_url = ?, category = ?, is_active = ?, connected = ? 
        WHERE id = ?`,
-      [title, level, startDate, year, fee, imageUrl, category, isActive !== undefined ? isActive : true, id]
+      [title, level, startDate, year, fee, imageUrl, category, isActive !== undefined ? isActive : true, connected !== undefined ? connected : 0, id]
     );
 
     return NextResponse.json({

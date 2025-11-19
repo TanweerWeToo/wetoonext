@@ -1,127 +1,16 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Marquee } from "@/components/ui/marquee";
 import { Star, Quote } from "lucide-react";
 
-const reviews = [
-  {
-    name: "Aman",
-    username: "Aman, RCA Selected 2024",
-    body: "Selected! Thank you so much to @Tanweer Ahmad Sir for all your help. Also thanks to all my friends who shared their transcripts ",
-    img: "https://avatar.vercel.sh/jack",
-    rating: 5,
-  },
-  {
-    name: "Akansha Biswas",
-    username: "Akansha Biswas, RCA Selected 2024 ",
-    body: "Selected! Thank you to all for sharing your interview transcripts and @Wetoo Media for sharing previous transcripts because I did get questions from those! Very grateful!",
-    img: "https://avatar.vercel.sh/jill",
-    rating: 4,
-  },
-  {
-    name: "Rozy Parveen",
-    username: "Rozy Parveen, RCA Selected 2024",
-    body: "Selected! 🤩... Thanks @Tanweer Ahmad sir.",
-    img: "https://avatar.vercel.sh/john",
-    rating: 5,
-  },
-  {
-    name: "Naved",
-    username: "Naved, RCA Selected 2024 ",
-    body: "Selected!! Thank you sir, for interview guidance.",
-    img: "https://avatar.vercel.sh/jane",
-    rating: 4,
-  },
-  {
-    name: "ANA Musharraf",
-    username: "ANA Musharraf, RCA selected 2024 ",
-    body: "WeToo’s RCA interview guidance program was really helpful in giving the direction in which the interview prep should be done, specially the transcript were really useful. Thank you Tanweer sir for the initiative.",
-    img: "https://avatar.vercel.sh/james",
-    rating: 4,
-  },
-  {
-    name: "Ruksar",
-    username: "Ruksar, RCA Selected 2024",
-    body: "Selected! Thank You Sir, your guidance and fellow candidate’s transcripts ere of great help. Thank you🌸",
-    img: "https://avatar.vercel.sh/james",
-    rating: 4,
-  },
-  {
-    name: "Kritika",
-    username: "Kritika, RCA Selected 2024",
-    body: "Thank you so much @Tanweer Ahmad @Wetoo Media. It's all because of your help.",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 4,
-  },
-  {
-    name: "Saquib",
-    username: "Saquib, RCA Selected 2024 ",
-    body: "Thank You very much, Tanweer sir and Wetoo Media, for the 'RCA Interview Guidance Program'. It helped me a lot and gave me a roadmap for the practice, which aided me get on the list.",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  {
-    name: "Dawood",
-    username: "Dawood, RCA Selected 2024",
-    body: "Alhamdulillah selected! Thanks for sharing insightful informations @Tanweer Ahmad sir",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  {
-    name: "Dr. A. R. Rajah",
-    username: "Dr. A. R. Rajah, RCA",
-    body: "First time while checking I used find and couldn’t see my number, now it is there 😂 Thanks to @Tanweer Ahmad for the guidance and also ppl who put up transcripts😇 Got through both HSC and Jamia😇",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  //   {
-  //     name: "Annu",
-  //     username: "Annu, RCA Selected 2024",
-  //     body: `I was a part of WeToo Media JMI-RCA interview group. I express my heartfelt gratitude towards Tanweer Sir and his whole team. They played a great role in my selection.
-
-  // The discussions on Google Meet were beneficial for understanding interview procedure.
-
-  // A WhatsApp group was made for us to go through previous and this year’s interview transcripts.
-
-  // Having somebody to guide and help us in this journey added confidence.
-
-  // Useful and insightful videos about JMI RCA helped me to get motivated for the entrance exam.
-
-  // Sending best wishes from my side for building a community of caring and helpful mentors.`,
-  //     img: "https://avatar.vercel.sh/jenny",
-  //     rating: 5,
-  //   },
-  {
-    name: "MD Tauseef",
-    username: "MD Tauseef",
-    body: "My name is MD Tausif. I am preparing for UPSC CSE. Previously I used to be confused regarding admission RCAs. But now, I would like to thanks TANWEER SIR and his platform WE TOO MEDIA IAS for continuously guiding me. The interview guidance program of Sir helped me to secure a seat in JAMIA RCA (2024-25). ",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  {
-    name: "Unknown",
-    username: "Unknown",
-    body: "Thanks a ton @Tanweer Ahmad Sir for this platform and guidance at every stage. Immense gratitude towards @Ghulam Jilani @Dr A R Rajah RCA Written Qualified 2023 Imran sir for interview related guidance.",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  {
-    name: "Unknown",
-    username: "Unknown",
-    body: "Thank you so much sir for your all efforts 😊😊 A big thank you for Tanweer sir 😊.",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-  {
-    name: "Unknown",
-    username: "Unknown",
-    body: "Thank you @Tanweer Ahmad, @Dr A R Rajah Rca Written Qualified 2023 bhai and everyone who have been through this journey.. Got through! Congratulations to everyone who have been selected and to those who couldn't don't give up. Life doesn't stop here. Keep hustling. ",
-    img: "https://avatar.vercel.sh/jenny",
-    rating: 5,
-  },
-];
-
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
+// Helper function to generate avatar URL based on color
+const generateAvatar = (name, color) => {
+  // Create a simple hash from name for consistent avatars
+  const hash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return `https://avatar.vercel.sh/${hash}`;
+};
 
 const ReviewCard = ({ img, name, username, body, rating }) => {
   return (
@@ -166,6 +55,42 @@ const ReviewCard = ({ img, name, username, body, rating }) => {
 };
 
 export default function Testimonial() {
+  const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch testimonials from API
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/text-testimonials');
+        const data = await response.json();
+        
+        if (data.success && data.testimonials) {
+          // Transform API data to match component structure
+          const transformedData = data.testimonials.map((testimonial) => ({
+            name: testimonial.name,
+            username: testimonial.subtitle,
+            body: testimonial.testimonial,
+            img: generateAvatar(testimonial.name, testimonial.avatar_color),
+            rating: testimonial.rating,
+          }));
+          
+          setReviews(transformedData);
+        }
+      } catch (error) {
+        console.error('Failed to fetch text testimonials:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  // Split reviews into two rows for marquee
+  const firstRow = reviews.slice(0, Math.ceil(reviews.length / 2));
+  const secondRow = reviews.slice(Math.ceil(reviews.length / 2));
+
   return (
     <section className="px-5 md:px-8 py-10 md:py-16 relative overflow-hidden">
       <div className="relative flex w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-hidden">
@@ -179,18 +104,35 @@ export default function Testimonial() {
             our products and services.
           </p>
         </div> */}
-        <Marquee pauseOnHover className="[--duration:20s] [--gap:2rem]">
-          {firstRow.map((review) => (
-            <ReviewCard key={review.username} {...review} />
-          ))}
-        </Marquee>
-        <Marquee reverse pauseOnHover className="[--duration:20s] [--gap:2rem]">
-          {secondRow.map((review) => (
-            <ReviewCard key={review.username} {...review} />
-          ))}
-        </Marquee>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-background"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-background"></div>
+        
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-text">Loading testimonials...</p>
+          </div>
+        ) : reviews.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">💬</div>
+            <p className="text-text text-xl font-medium">No testimonials available</p>
+            <p className="text-text/60 mt-2">Check back soon for student reviews!</p>
+          </div>
+        ) : (
+          <>
+            <Marquee pauseOnHover className="[--duration:20s] [--gap:2rem]">
+              {firstRow.map((review) => (
+                <ReviewCard key={review.username} {...review} />
+              ))}
+            </Marquee>
+            <Marquee reverse pauseOnHover className="[--duration:20s] [--gap:2rem]">
+              {secondRow.map((review) => (
+                <ReviewCard key={review.username} {...review} />
+              ))}
+            </Marquee>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-linear-to-r from-background"></div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-linear-to-l from-background"></div>
+          </>
+        )}
       </div>
     </section>
   );

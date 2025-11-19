@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function ApplicationPopup({ isOpen, onClose }) {
+export default function ApplicationPopup({ isOpen, onClose, courseName = "", courseFee = "499" }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
@@ -37,8 +37,13 @@ export default function ApplicationPopup({ isOpen, onClose }) {
     grad_year: "",
     optional_paper: "",
     comments: "",
-    course_name: "",
+    course_name: courseName,
   });
+
+  // Update course_name in formData when courseName prop changes
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, course_name: courseName }));
+  }, [courseName]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -441,7 +446,7 @@ export default function ApplicationPopup({ isOpen, onClose }) {
           <div className="flex items-center justify-between pt-4 border-t">
             <p className="text-sm text-gray-600">
               Application Fee:{" "}
-              <span className="font-semibold text-lg text-emerald-600">₹499</span>
+              <span className="font-semibold text-lg text-emerald-600">₹{courseFee}</span>
             </p>
             <Button
               type="submit"
