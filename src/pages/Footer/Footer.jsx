@@ -1,5 +1,3 @@
-"use client";
-
 const logo = "/wetoo-logo.jpg";
 import {
   Facebook,
@@ -25,59 +23,72 @@ export default function Footer() {
     });
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   const footerSections = [
+    // {
+    //   label: "Blog/News",
+    //   items: [
+    //     { name: "UPSC Preparation Strategy", path: "/#" },
+    //     {
+    //       name: "Syllabus & Study Techniques",
+    //       path: "/#",
+    //     },
+    //     {
+    //       name: "Current Affairs & Government Schemes",
+    //       path: "/#",
+    //     },
+    //     {
+    //       name: "Success & Interview Guidance",
+    //       path: "/#",
+    //     },
+    //   ],
+    // },
     {
-      label: "Blog/News",
+      label: "Quick Links",
       items: [
-        { name: "UPSC Preparation Strategy", path: "/about/vision-mission" },
-        {
-          name: "Syllabus & Study Techniques",
-          path: "/about/accreditations-rankings",
-        },
-        {
-          name: "Current Affairs & Government Schemes",
-          path: "/accreditations",
-        },
-        {
-          name: "Success & Interview Guidance",
-          path: "/students-life/life-at-ssim",
-        },
-        // { name: "Media", path: "/students-life/news-announcements" },
-        // { name: "Blog", path: "/blog" },
-        // { name: "Careers", path: "/careers" },
-        // {
-        //   name: "AICTE Feedback",
-        //   path: "https://www.aicte-india.org/feedback/",
-        // },
-        // { name: "AICTE Approvals", path: aicteapprovals },
+        { name: "Home", path: "#hero", isScroll: true },
+        { name: "About", path: "#about", isScroll: true },
+        { name: "Programs", path: "#programs", isScroll: true },
+        { name: "Testimonials", path: "#testimonials", isScroll: true },
+        { name: "YouTube", path: "#youtube", isScroll: true },
+        { name: "Contact", path: "#contact", isScroll: true },
       ],
     },
     {
       label: "Upcomings",
       items: [
-        { name: "Upcoming Event 1", path: "/events/event1" },
-        { name: "Upcoming Event 2", path: "/events/event2" },
-        { name: "Upcoming Event 3", path: "/events/event3" },
-        { name: "Upcoming Event 4", path: "/events/event4" },
-        { name: "Upcoming Event 5", path: "/events/event5" },
+        { name: "Upcoming Event 1", path: "/#" },
+        { name: "Upcoming Event 2", path: "/#" },
+        { name: "Upcoming Event 3", path: "/#" },
+        { name: "Upcoming Event 4", path: "/#" },
+        { name: "Upcoming Event 5", path: "/#" },
       ],
     },
     {
       label: "Matrimonial",
       items: [
-        { name: "Create Profile", path: "/matrimonial/create" },
-        { name: "Browse Profiles", path: "/matrimonial/browse" },
-        { name: "Success Stories", path: "/matrimonial/success" },
-        { name: "Premium Membership", path: "/matrimonial/premium" },
+        { name: "Create Profile", path: "/#" },
+        { name: "Browse Profiles", path: "/#" },
+        { name: "Success Stories", path: "/#" },
+        { name: "Premium Membership", path: "/#" },
       ],
     },
     {
       label: "Contact Us",
       items: [
-        { name: "Head Office - Delhi", path: "/contact/delhi" },
-        // { name: "Mumbai Office", path: "/contact/mumbai" },
-        // { name: "Bangalore Office", path: "/contact/bangalore" },
-        { name: "Support Center", path: "/contact/support" },
+        { name: "Head Office - Delhi", path: "/#" },
+        { name: "+91 9773573083", path: "tel:+919773573083" },
+        { name: "www.wetoomedia.com", path: "https://www.wetoomedia.com" },
+        { name: "wetoo.media@gmail.com", path: "mailto:wetoo.media@gmail.com" },
       ],
     },
   ];
@@ -213,6 +224,26 @@ export default function Footer() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="group inline-flex items-center gap-1 text-white/90 hover:text-white/80 transition-colors duration-200"
+                        >
+                          {item.name}
+                        </a>
+                      ) : item.path.startsWith("mailto:") ||
+                        item.path.startsWith("tel:") ? (
+                        <a
+                          href={item.path}
+                          className="group inline-flex items-center gap-1 text-white/90 hover:text-white/80 transition-colors duration-200"
+                        >
+                          {item.name}
+                        </a>
+                      ) : item.isScroll ? (
+                        <a
+                          href={item.path}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const sectionId = item.path.replace("#", "");
+                            scrollToSection(sectionId);
+                          }}
+                          className="group inline-flex items-center gap-1 text-white/90 hover:text-white/80 transition-colors duration-200 cursor-pointer"
                         >
                           {item.name}
                         </a>

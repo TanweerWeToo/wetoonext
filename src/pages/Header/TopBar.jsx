@@ -7,7 +7,7 @@ export default function TopBar() {
         <div className="flex items-center flex-wrap sm:space-x-4 sm:mb-0">
           <a
             href="mailto:wetoo.media@gmail.com"
-            className="hidden sm:flex items-center mr-2 sm:mr-0 hover:text-white/80"
+            className="hidden sm:flex items-center mr-2 sm:mr-4 hover:text-white/80"
           >
             <Mail className="hidden sm:block h-4 w-4 mr-2" />
             wetoo.media@gmail.com
