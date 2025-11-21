@@ -23,7 +23,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function ApplicationPopup({ isOpen, onClose, courseName = "", courseFee = "499" }) {
+export default function ApplicationPopup({
+  isOpen,
+  onClose,
+  courseName = "",
+  courseFee = "2999",
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
@@ -42,7 +47,7 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
   // Update course_name in formData when courseName prop changes
   useEffect(() => {
-    setFormData(prev => ({ ...prev, course_name: courseName }));
+    setFormData((prev) => ({ ...prev, course_name: courseName }));
   }, [courseName]);
 
   const handleChange = (e) => {
@@ -193,43 +198,65 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
             Registration Form
           </DialogTitle>
           <DialogDescription className="text-base text-gray-600">
-            Please fill in your details to register for{" "}
-            <span className="text-emerald-600 font-medium">
-              {formData.course_name || "your selected course"}
-            </span>
+            Please fill in your details to register for the course
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
           {/* Course Selection */}
           <div className="space-y-2">
-            <Label htmlFor="course_name" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="course_name"
+              className="text-sm font-medium text-gray-700"
+            >
               Select Course <span className="text-red-500">*</span>
             </Label>
             <Select
               value={formData.course_name}
-              onValueChange={(value) => handleSelectChange("course_name", value)}
+              onValueChange={(value) =>
+                handleSelectChange("course_name", value)
+              }
               required
             >
               <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
                 <SelectValue placeholder="Choose a course" />
               </SelectTrigger>
-              <SelectContent position="popper" className="max-h-[300px] overflow-y-auto">
-                <SelectItem value="RCA Preparation">RCA Preparation</SelectItem>
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
                 <SelectItem value="IAS Mentorship">IAS Mentorship</SelectItem>
-                <SelectItem value="CSE Foundation">CSE Foundation</SelectItem>
-                <SelectItem value="RCA Guidance Program">RCA Guidance Program</SelectItem>
-                <SelectItem value="CSE & RCA Essay Master Class">CSE & RCA Essay Master Class</SelectItem>
-                <SelectItem value="CSE & RCA CSAT Master Class">CSE & RCA CSAT Master Class</SelectItem>
-                <SelectItem value="Communication Enhancement Program">Communication Enhancement Program</SelectItem>
-                <SelectItem value="Analytical Enhancement Program">Analytical Enhancement Program</SelectItem>
+                <SelectItem disabled value="RCA Preparation">
+                  RCA Preparation
+                </SelectItem>
+                <SelectItem disabled value="CSE Foundation">
+                  CSE Foundation
+                </SelectItem>
+                <SelectItem disabled value="RCA Guidance Program">
+                  RCA Guidance Program
+                </SelectItem>
+                <SelectItem disabled value="CSE & RCA Essay Master Class">
+                  CSE & RCA Essay Master Class
+                </SelectItem>
+                <SelectItem disabled value="CSE & RCA CSAT Master Class">
+                  CSE & RCA CSAT Master Class
+                </SelectItem>
+                <SelectItem disabled value="Communication Enhancement Program">
+                  Communication Enhancement Program
+                </SelectItem>
+                <SelectItem disabled value="Analytical Enhancement Program">
+                  Analytical Enhancement Program
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Full Name */}
           <div className="space-y-2">
-            <Label htmlFor="full_name" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="full_name"
+              className="text-sm font-medium text-gray-700"
+            >
               Full Name <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -246,7 +273,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Father's Name */}
           <div className="space-y-2">
-            <Label htmlFor="father_name" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="father_name"
+              className="text-sm font-medium text-gray-700"
+            >
               Father's Name <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -263,7 +293,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Email Address */}
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
               Email Address <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -280,7 +313,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Mobile Number */}
           <div className="space-y-2">
-            <Label htmlFor="mobile" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="mobile"
+              className="text-sm font-medium text-gray-700"
+            >
               Mobile Number <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -314,7 +350,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* State */}
           <div className="space-y-2">
-            <Label htmlFor="state" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="state"
+              className="text-sm font-medium text-gray-700"
+            >
               State <span className="text-red-500">*</span>
             </Label>
             <Select
@@ -325,16 +364,23 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
               <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
                 <SelectValue placeholder="Select your state" />
               </SelectTrigger>
-              <SelectContent position="popper" className="max-h-[300px] overflow-y-auto">
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
                 <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
-                <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
+                <SelectItem value="Arunachal Pradesh">
+                  Arunachal Pradesh
+                </SelectItem>
                 <SelectItem value="Assam">Assam</SelectItem>
                 <SelectItem value="Bihar">Bihar</SelectItem>
                 <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
                 <SelectItem value="Goa">Goa</SelectItem>
                 <SelectItem value="Gujarat">Gujarat</SelectItem>
                 <SelectItem value="Haryana">Haryana</SelectItem>
-                <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
+                <SelectItem value="Himachal Pradesh">
+                  Himachal Pradesh
+                </SelectItem>
                 <SelectItem value="Jharkhand">Jharkhand</SelectItem>
                 <SelectItem value="Karnataka">Karnataka</SelectItem>
                 <SelectItem value="Kerala">Kerala</SelectItem>
@@ -360,8 +406,12 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Recent Degree/Course Completed */}
           <div className="space-y-2">
-            <Label htmlFor="degree" className="text-sm font-medium text-gray-700">
-              Recent Degree/Course Completed <span className="text-red-500">*</span>
+            <Label
+              htmlFor="degree"
+              className="text-sm font-medium text-gray-700"
+            >
+              Recent Degree/Course Completed{" "}
+              <span className="text-red-500">*</span>
             </Label>
             <Input
               id="degree"
@@ -377,7 +427,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Subject */}
           <div className="space-y-2">
-            <Label htmlFor="subject" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="subject"
+              className="text-sm font-medium text-gray-700"
+            >
               Subject <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -394,7 +447,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Year of Passing */}
           <div className="space-y-2">
-            <Label htmlFor="grad_year" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="grad_year"
+              className="text-sm font-medium text-gray-700"
+            >
               Year of Passing <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -412,7 +468,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Optional Paper */}
           <div className="space-y-2">
-            <Label htmlFor="optional_paper" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="optional_paper"
+              className="text-sm font-medium text-gray-700"
+            >
               Optional Paper (if applicable)
             </Label>
             <Input
@@ -428,7 +487,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
 
           {/* Additional Comments */}
           <div className="space-y-2">
-            <Label htmlFor="comments" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="comments"
+              className="text-sm font-medium text-gray-700"
+            >
               Additional Comments
             </Label>
             <Textarea
@@ -445,8 +507,10 @@ export default function ApplicationPopup({ isOpen, onClose, courseName = "", cou
           {/* Submit Button */}
           <div className="flex items-center justify-between pt-4 border-t">
             <p className="text-sm text-gray-600">
-              Application Fee:{" "}
-              <span className="font-semibold text-lg text-emerald-600">₹{courseFee}</span>
+              Platform Charge:{"  "}
+              <span className="font-semibold text-lg text-emerald-600">
+                ₹{courseFee}/-
+              </span>
             </p>
             <Button
               type="submit"

@@ -18,8 +18,8 @@ export async function POST(request) {
       );
     }
 
-    // Fixed application fee (in paise - ₹499 = 49900 paise)
-    const amount = 100; // ₹499
+    // Fixed application fee (in paise - ₹2999 = 299900 paise)
+    const amount = 299900; // ₹2999
     const currency = 'INR';
 
     // Create Razorpay order
