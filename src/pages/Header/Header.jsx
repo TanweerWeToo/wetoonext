@@ -13,8 +13,9 @@ export default function Header() {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Check if we're on the services page
+  // Check if we're on the services page or resume-payment page
   const isServicesPage = pathname === "/services";
+  const isResumePaymentPage = pathname === "/resume-payment";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,7 +36,7 @@ export default function Header() {
 
   // Determine navbar styling based on route and scroll state
   const getNavbarStyling = () => {
-    if (isServicesPage) {
+    if (isServicesPage || isResumePaymentPage) {
       return "bg-white text-black shadow-md";
     }
     if (isScrolled) {
@@ -61,14 +62,14 @@ export default function Header() {
             />
             <span
               className={`text-base font-bold ${
-                isServicesPage ? "text-black" : ""
+                isServicesPage || isResumePaymentPage ? "text-black" : ""
               }`}
             >
               WETOO MEDIA <br /> FOUNDATION
             </span>
           </Link>
-          <MainNav isScrolled={isScrolled} isServicesPage={isServicesPage} />
-          <Drawer isScrolled={isScrolled} isServicesPage={isServicesPage} />
+          <MainNav isScrolled={isScrolled} isServicesPage={isServicesPage} isResumePaymentPage={isResumePaymentPage} />
+          <Drawer isScrolled={isScrolled} isServicesPage={isServicesPage} isResumePaymentPage={isResumePaymentPage} />
         </div>
       </div>
     </header>

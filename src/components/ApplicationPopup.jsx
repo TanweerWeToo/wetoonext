@@ -153,6 +153,9 @@ export default function ApplicationPopup({
         },
       };
 
+      // Close the ApplicationPopup before opening Razorpay
+      onClose();
+      
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {

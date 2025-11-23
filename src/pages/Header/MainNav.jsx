@@ -57,7 +57,7 @@ const menuItems = [
   },
 ];
 
-const MainNav = ({ isScrolled, isServicesPage }) => {
+const MainNav = ({ isScrolled, isServicesPage, isResumePaymentPage }) => {
   const router = useRouter();
 
   const handleClick = (e, targetId) => {
@@ -82,9 +82,9 @@ const MainNav = ({ isScrolled, isServicesPage }) => {
     }
   };
 
-  // Determine text color based on services page or scroll state
+  // Determine text color based on services page, resume payment page, or scroll state
   const getTextColor = () => {
-    if (isServicesPage) return "text-black";
+    if (isServicesPage || isResumePaymentPage) return "text-black";
     if (isScrolled) return "text-black";
     return "text-white";
   };

@@ -51,7 +51,7 @@ const navlinks = [
   },
 ];
 
-const Drawer = ({ isScrolled, isServicesPage }) => {
+const Drawer = ({ isScrolled, isServicesPage, isResumePaymentPage }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -79,9 +79,9 @@ const Drawer = ({ isScrolled, isServicesPage }) => {
     setIsOpen(false);
   };
 
-  // Determine button text color based on services page or scroll state
+  // Determine button text color based on services page, resume payment page, or scroll state
   const getButtonTextColor = () => {
-    if (isServicesPage) return "text-black";
+    if (isServicesPage || isResumePaymentPage) return "text-black";
     if (isScrolled) return "text-black";
     return "text-white";
   };
