@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function ResumePaymentPage() {
+function ResumePaymentContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const applicationId = searchParams.get("id");
@@ -311,6 +311,23 @@ export default function ResumePaymentPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ResumePaymentPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mx-auto mb-4" />
+            <p className="text-gray-600">Loading payment details...</p>
+          </div>
+        </div>
+      }
+    >
+      <ResumePaymentContent />
+    </Suspense>
   );
 }
 
