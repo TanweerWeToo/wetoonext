@@ -157,3 +157,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .animate-banner {
+    animation: marquee var(--duration, 60s) infinite linear;
+  }
+}

@@ -6,6 +6,7 @@ import TopBar from "@/pages/Header/TopBar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Marquee from "./Marquee";
 
 export default function Header() {
   const pathname = usePathname();
@@ -46,32 +47,43 @@ export default function Header() {
   };
 
   return (
-    <header
-      className={`shadow-sm z-50 backdrop-blur-sm transition-all duration-500 fixed w-full ${
-        isVisible ? "top-0 translate-y-0" : "-translate-y-full"
-      } ${getNavbarStyling()}`}
-    >
-      <TopBar />
-      <div className="sm:container md:max-w-6xl lg:max-w-[1400px] mx-auto py-1">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center overflow-hidden">
-            <img
-              src="/wetoo-logo.jpg"
-              alt="Wetoo Logo"
-              className="p-2 rounded-full h-[70px]"
+    <>
+      <Marquee />
+      <header
+        className={`shadow-sm z-50 backdrop-blur-sm transition-all duration-500 fixed w-full ${
+          isVisible ? "top-8 translate-y-0" : "-translate-y-full"
+        } ${getNavbarStyling()}`}
+      >
+        <TopBar />
+        <div className="sm:container md:max-w-6xl lg:max-w-[1400px] mx-auto py-1">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="flex items-center overflow-hidden">
+              <img
+                src="/wetoo-logo.jpg"
+                alt="Wetoo Logo"
+                className="p-2 rounded-full h-[70px]"
+              />
+              <span
+                className={`text-base font-bold ${
+                  isServicesPage || isResumePaymentPage ? "text-black" : ""
+                }`}
+              >
+                WETOO MEDIA <br /> FOUNDATION
+              </span>
+            </Link>
+            <MainNav
+              isScrolled={isScrolled}
+              isServicesPage={isServicesPage}
+              isResumePaymentPage={isResumePaymentPage}
             />
-            <span
-              className={`text-base font-bold ${
-                isServicesPage || isResumePaymentPage ? "text-black" : ""
-              }`}
-            >
-              WETOO MEDIA <br /> FOUNDATION
-            </span>
-          </Link>
-          <MainNav isScrolled={isScrolled} isServicesPage={isServicesPage} isResumePaymentPage={isResumePaymentPage} />
-          <Drawer isScrolled={isScrolled} isServicesPage={isServicesPage} isResumePaymentPage={isResumePaymentPage} />
+            <Drawer
+              isScrolled={isScrolled}
+              isServicesPage={isServicesPage}
+              isResumePaymentPage={isResumePaymentPage}
+            />
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }
