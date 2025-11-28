@@ -386,28 +386,28 @@ Complete information about this application
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Degree</p>
-                <p className="text-sm">{selectedApplication.degree}</p>
+                <p className="text-sm">{selectedApplication.degree || "—"}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Subject</p>
-                <p className="text-sm">{selectedApplication.subject}</p>
+                <p className="text-sm font-medium text-gray-500">Your Medium</p>
+                <p className="text-sm">{selectedApplication.medium || "—"}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Graduation Year</p>
-                <p className="text-sm">{selectedApplication.grad_year}</p>
+                <p className="text-sm font-medium text-gray-500">Applying for CSE Prelims Mentorship Batch</p>
+                <p className="text-sm">{selectedApplication.batch_year || "—"}</p>
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Optional Paper</p>
-                <p className="text-sm">{selectedApplication.optional_paper}</p>
+                <p className="text-sm">{selectedApplication.optional_paper || "—"}</p>
               </div>
               <div className="col-span-2">
                 <p className="text-sm font-medium text-gray-500">Course</p>
                 <p className="text-sm">{selectedApplication.course_name}</p>
               </div>
-              {selectedApplication.comments && (
+              {selectedApplication.previous_cleared && (
                 <div className="col-span-2">
-                  <p className="text-sm font-medium text-gray-500">Comments</p>
-                  <p className="text-sm">{selectedApplication.comments}</p>
+                  <p className="text-sm font-medium text-gray-500">Any Previous Prelims or Mains Cleared (UPSC or State)</p>
+                  <p className="text-sm">{selectedApplication.previous_cleared}</p>
                 </div>
               )}
               <div>

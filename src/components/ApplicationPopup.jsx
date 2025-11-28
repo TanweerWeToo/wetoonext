@@ -127,10 +127,10 @@ export default function ApplicationPopup({
               dob: "",
               state: "",
               degree: "",
-              subject: "",
-              grad_year: "",
+              medium: "",
+              batch_year: "",
               optional_paper: "",
-              comments: "",
+              previous_cleared: "",
               course_name: "",
             });
           } else {
@@ -428,45 +428,58 @@ export default function ApplicationPopup({
             />
           </div>
 
-          {/* Subject */}
+          {/* Your Medium */}
           <div className="space-y-2">
             <Label
-              htmlFor="subject"
+              htmlFor="medium"
               className="text-sm font-medium text-gray-700"
             >
-              Subject <span className="text-red-500">*</span>
+              Your Medium <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="subject"
-              name="subject"
-              type="text"
-              value={formData.subject}
-              onChange={handleChange}
-              placeholder="Major subject"
+            <Select
+              value={formData.medium}
+              onValueChange={(value) => handleSelectChange("medium", value)}
               required
-              className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-            />
+            >
+              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                <SelectValue placeholder="Select your medium" />
+              </SelectTrigger>
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
+                <SelectItem value="English">English</SelectItem>
+                <SelectItem value="Hindi">Hindi</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Year of Passing */}
+          {/* Applying for CSE Prelims Mentorship Batch */}
           <div className="space-y-2">
             <Label
-              htmlFor="grad_year"
+              htmlFor="batch_year"
               className="text-sm font-medium text-gray-700"
             >
-              Year of Passing <span className="text-red-500">*</span>
+              Applying for CSE Prelims Mentorship Batch{" "}
+              <span className="text-red-500">*</span>
             </Label>
-            <Input
-              id="grad_year"
-              name="grad_year"
-              type="text"
-              value={formData.grad_year}
-              onChange={handleChange}
-              placeholder="e.g., 2024"
-              pattern="[0-9]{4}"
+            <Select
+              value={formData.batch_year}
+              onValueChange={(value) => handleSelectChange("batch_year", value)}
               required
-              className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-            />
+            >
+              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                <SelectValue placeholder="Select batch year" />
+              </SelectTrigger>
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
+                <SelectItem value="2026">2026</SelectItem>
+                <SelectItem value="2027">2027</SelectItem>
+                <SelectItem value="2028">2028</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Optional Paper */}
@@ -488,20 +501,20 @@ export default function ApplicationPopup({
             />
           </div>
 
-          {/* Additional Comments */}
+          {/* Any Previous Prelims or Mains Cleared */}
           <div className="space-y-2">
             <Label
-              htmlFor="comments"
+              htmlFor="previous_cleared"
               className="text-sm font-medium text-gray-700"
             >
-              Additional Comments
+              Any Previous Prelims or Mains Cleared (UPSC or State)
             </Label>
             <Textarea
-              id="comments"
-              name="comments"
-              value={formData.comments}
+              id="previous_cleared"
+              name="previous_cleared"
+              value={formData.previous_cleared}
               onChange={handleChange}
-              placeholder="Any additional information..."
+              placeholder="Enter details about any previous prelims or mains cleared..."
               rows={3}
               className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 resize-none"
             />
