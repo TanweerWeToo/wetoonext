@@ -38,10 +38,10 @@ export default function ApplicationPopup({
     dob: "",
     state: "",
     degree: "",
-    subject: "",
-    grad_year: "",
+    medium: "",
+    batch_year: "",
     optional_paper: "",
-    comments: "",
+    previous_cleared: "",
     course_name: courseName,
   });
 
