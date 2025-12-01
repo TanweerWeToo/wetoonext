@@ -41,7 +41,8 @@ export default function ApplicationPopup({
     medium: "",
     batch_year: "",
     optional_paper: "",
-    previous_cleared: "",
+    prelims_cleared: "",
+    mains_cleared: "",
     course_name: courseName,
   });
 
@@ -130,7 +131,8 @@ export default function ApplicationPopup({
               medium: "",
               batch_year: "",
               optional_paper: "",
-              previous_cleared: "",
+              prelims_cleared: "",
+              mains_cleared: "",
               course_name: "",
             });
           } else {
@@ -501,23 +503,64 @@ export default function ApplicationPopup({
             />
           </div>
 
-          {/* Any Previous Prelims or Mains Cleared */}
+          {/* Number of Prelims Cleared */}
           <div className="space-y-2">
             <Label
-              htmlFor="previous_cleared"
+              htmlFor="prelims_cleared"
               className="text-sm font-medium text-gray-700"
             >
-              Any Previous Prelims or Mains Cleared (UPSC or State)
+              Number of Prelims Cleared (0–6)
             </Label>
-            <Textarea
-              id="previous_cleared"
-              name="previous_cleared"
-              value={formData.previous_cleared}
-              onChange={handleChange}
-              placeholder="Enter details about any previous prelims or mains cleared..."
-              rows={3}
-              className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 resize-none"
-            />
+            <Select
+              value={formData.prelims_cleared}
+              onValueChange={(value) => handleSelectChange("prelims_cleared", value)}
+            >
+              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                <SelectValue placeholder="Select number of prelims cleared" />
+              </SelectTrigger>
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
+                <SelectItem value="0">0</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="6">6</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Number of Mains Cleared */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="mains_cleared"
+              className="text-sm font-medium text-gray-700"
+            >
+              Number of Mains Cleared (0–6)
+            </Label>
+            <Select
+              value={formData.mains_cleared}
+              onValueChange={(value) => handleSelectChange("mains_cleared", value)}
+            >
+              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                <SelectValue placeholder="Select number of mains cleared" />
+              </SelectTrigger>
+              <SelectContent
+                position="popper"
+                className="max-h-[300px] overflow-y-auto"
+              >
+                <SelectItem value="0">0</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="6">6</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Submit Button */}

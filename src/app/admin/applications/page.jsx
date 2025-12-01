@@ -404,12 +404,14 @@ Complete information about this application
                 <p className="text-sm font-medium text-gray-500">Course</p>
                 <p className="text-sm">{selectedApplication.course_name}</p>
               </div>
-              {selectedApplication.previous_cleared && (
-                <div className="col-span-2">
-                  <p className="text-sm font-medium text-gray-500">Any Previous Prelims or Mains Cleared (UPSC or State)</p>
-                  <p className="text-sm">{selectedApplication.previous_cleared}</p>
-                </div>
-              )}
+              <div>
+                <p className="text-sm font-medium text-gray-500">Number of Prelims Cleared</p>
+                <p className="text-sm">{selectedApplication.prelims_cleared || "—"}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Number of Mains Cleared</p>
+                <p className="text-sm">{selectedApplication.mains_cleared || "—"}</p>
+              </div>
               <div>
                 <p className="text-sm font-medium text-gray-500">Status</p>
                 {getStatusBadge(selectedApplication.status)}

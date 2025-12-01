@@ -17,7 +17,8 @@ export async function POST(request) {
     const medium = data.medium;
     const batchYear = data.batchYear || data.batch_year;
     const optionalPaper = data.optionalPaper || data.optional_paper;
-    const previousCleared = data.previousCleared || data.previous_cleared;
+    const prelimsCleared = data.prelimsCleared || data.prelims_cleared;
+    const mainsCleared = data.mainsCleared || data.mains_cleared;
     const courseName = data.courseName || data.course_name;
     const paid = data.paid;
 
@@ -45,9 +46,9 @@ export async function POST(request) {
     // Insert application
     const result = await query(
       `INSERT INTO applications 
-      (full_name, father_name, email, mobile, dob, state, degree, medium, batch_year, optional_paper, previous_cleared, course_name, paid) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [fullName, fatherName, email, mobile, dob, state, degree, medium || '', batchYear || '', optionalPaper || '', previousCleared || '', courseName, paid || false]
+      (full_name, father_name, email, mobile, dob, state, degree, medium, batch_year, optional_paper, prelims_cleared, mains_cleared, course_name, paid) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [fullName, fatherName, email, mobile, dob, state, degree, medium || '', batchYear || '', optionalPaper || '', prelimsCleared || '', mainsCleared || '', courseName, paid || false]
     );
 
     return NextResponse.json({

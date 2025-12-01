@@ -24,7 +24,7 @@ export const generateEnrollmentId = () => {
 
 // Generate resume payment link
 export const generateResumePaymentLink = (applicationId) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.wetoomedia.com';
   return `${baseUrl}/resume-payment?id=${applicationId}`;
 };
 
