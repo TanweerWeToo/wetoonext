@@ -23,8 +23,7 @@ export async function GET(request) {
         mobile, 
         course_name, 
         payment_status, 
-        razorpay_order_id,
-        payment_link_expires_at
+        razorpay_order_id
        FROM applications 
        WHERE id = ?`,
       [applicationId]
@@ -38,19 +37,6 @@ export async function GET(request) {
     }
 
     const application = applications[0];
-
-    // Check if payment link has expired
-    if (application.payment_link_expires_at) {
-      const expiryDate = new Date(application.payment_link_expires_at);
-      const now = new Date();
-      
-      if (now > expiryDate) {
-        return NextResponse.json(
-          { success: false, message: 'Payment link has expired', expired: true },
-          { status: 410 }
-        );
-      }
-    }
 
     // Check if payment is already completed
     if (application.payment_status === 'PAID') {

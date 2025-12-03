@@ -19,7 +19,8 @@ ADD COLUMN razorpay_payment_id VARCHAR(255) NULL AFTER razorpay_order_id;
 ALTER TABLE applications
 ADD COLUMN enrollment_id VARCHAR(50) NULL UNIQUE AFTER razorpay_payment_id;
 
--- Add payment link expiry timestamp (for security)
+-- Add payment link expiry timestamp (kept for audit/tracking purposes only - not used for expiry checks)
+-- Note: Links never expire - this field is maintained for historical tracking
 ALTER TABLE applications
 ADD COLUMN payment_link_expires_at DATETIME NULL AFTER enrollment_id;
 

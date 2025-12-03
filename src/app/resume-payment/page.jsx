@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -16,7 +16,6 @@ function ResumePaymentContent() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [application, setApplication] = useState(null);
   const [error, setError] = useState(null);
-  const [expired, setExpired] = useState(false);
   const [alreadyPaid, setAlreadyPaid] = useState(false);
 
   useEffect(() => {
@@ -37,9 +36,7 @@ function ResumePaymentContent() {
       if (data.success) {
         setApplication(data.application);
       } else {
-        if (data.expired) {
-          setExpired(true);
-        } else if (data.alreadyPaid) {
+        if (data.alreadyPaid) {
           setAlreadyPaid(true);
         } else {
           setError(data.message);
@@ -161,35 +158,6 @@ function ResumePaymentContent() {
           <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mx-auto mb-4" />
           <p className="text-gray-600">Loading payment details...</p>
         </div>
-      </div>
-    );
-  }
-
-  if (expired) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <Card className="max-w-md w-full">
-          <CardHeader>
-            <div className="flex justify-center mb-4">
-              <Clock className="w-16 h-16 text-orange-500" />
-            </div>
-            <CardTitle className="text-center text-2xl">Payment Link Expired</CardTitle>
-            <CardDescription className="text-center">
-              This payment link has expired for security reasons.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-gray-600 mb-6">
-              Please contact our support team to generate a new payment link.
-            </p>
-            <Button
-              onClick={() => router.push("/")}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              Return to Homepage
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     );
   }

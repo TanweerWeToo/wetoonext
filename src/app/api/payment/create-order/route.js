@@ -96,19 +96,16 @@ export async function POST(request) {
 
     const order = await razorpay.orders.create(options);
 
-    // Calculate payment link expiry (48 hours from now)
-    const expiryDate = new Date();
-    expiryDate.setHours(expiryDate.getHours() + 48);
-
     // Update application with Razorpay order ID and payment status
+    // Note: payment_link_expires_at is set to NULL - links never expire
     await query(
       `UPDATE applications 
        SET razorpay_order_id = ?, 
            payment_status = 'PENDING_PAYMENT',
-           payment_link_expires_at = ?,
+           payment_link_expires_at = NULL,
            updated_at = NOW()
        WHERE id = ?`,
-      [order.id, expiryDate, applicationId]
+      [order.id, applicationId]
     );
 
     // Schedule FOMO email (will send after 10 minutes if payment not completed)
