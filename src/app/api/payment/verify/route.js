@@ -73,10 +73,10 @@ export async function POST(request) {
         subject: emailData.subject,
         html: emailData.html,
         text: emailData.text,
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.success) {
           // Mark welcome email as sent
-          query(
+          await query(
             'UPDATE applications SET welcome_email_sent = 1 WHERE id = ?',
             [applicationId]
           );

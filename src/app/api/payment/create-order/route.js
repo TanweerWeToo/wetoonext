@@ -10,49 +10,51 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// Helper function to send FOMO email after delay
-const scheduleFomoEmail = async (applicationId) => {
-  // Wait 10 minutes before checking if payment was completed
-  setTimeout(async () => {
-    try {
-      // Check if payment is still pending
-      const applications = await query(
-        'SELECT * FROM applications WHERE id = ? AND payment_status = ?',
-        [applicationId, 'PENDING_PAYMENT']
-      );
+// Helper function to send FOMO email
+// Note: In serverless environments, we send immediately instead of using setTimeout
+// For delayed emails (10 minutes), use a cron job to call /api/payment/send-fomo-emails
+const sendFomoEmail = async (applicationId) => {
+  try {
+    // Check if payment is still pending
+    const applications = await query(
+      'SELECT * FROM applications WHERE id = ? AND payment_status = ?',
+      [applicationId, 'PENDING_PAYMENT']
+    );
 
-      if (applications.length > 0 && !applications[0].fomo_email_sent) {
-        const app = applications[0];
-        const resumeLink = generateResumePaymentLink(applicationId);
-        const amount = '2999'; // ₹2999
+    if (applications.length > 0 && !applications[0].fomo_email_sent) {
+      const app = applications[0];
+      const resumeLink = generateResumePaymentLink(applicationId);
+      const amount = '2999'; // ₹2999
 
-        const emailData = fomoEmailTemplate({
-          fullName: app.full_name,
-          courseName: app.course_name,
-          resumePaymentLink: resumeLink,
-          amount: amount,
-        });
+      const emailData = fomoEmailTemplate({
+        fullName: app.full_name,
+        courseName: app.course_name,
+        resumePaymentLink: resumeLink,
+        amount: amount,
+      });
 
-        const emailResult = await sendEmail({
-          to: app.email,
-          subject: emailData.subject,
-          html: emailData.html,
-          text: emailData.text,
-        });
+      const emailResult = await sendEmail({
+        to: app.email,
+        subject: emailData.subject,
+        html: emailData.html,
+        text: emailData.text,
+      });
 
-        if (emailResult.success) {
-          // Mark FOMO email as sent
-          await query(
-            'UPDATE applications SET fomo_email_sent = 1 WHERE id = ?',
-            [applicationId]
-          );
-          console.log(`FOMO email sent to ${app.email}`);
-        }
+      if (emailResult.success) {
+        // Mark FOMO email as sent
+        await query(
+          'UPDATE applications SET fomo_email_sent = 1 WHERE id = ?',
+          [applicationId]
+        );
+        console.log(`FOMO email sent to ${app.email}`);
+        return { success: true };
       }
-    } catch (error) {
-      console.error('FOMO email scheduling error:', error);
     }
-  }, 10 * 60 * 1000); // 10 minutes delay
+    return { success: false, reason: 'Payment completed or email already sent' };
+  } catch (error) {
+    console.error('FOMO email error:', error);
+    return { success: false, error: error.message };
+  }
 };
 
 export async function POST(request) {
@@ -108,8 +110,11 @@ export async function POST(request) {
       [order.id, applicationId]
     );
 
-    // Schedule FOMO email (will send after 10 minutes if payment not completed)
-    scheduleFomoEmail(applicationId);
+    // Send FOMO email asynchronously (fire and forget)
+    // Note: For 10-minute delay, use Vercel Cron Jobs to call /api/payment/send-fomo-emails
+    sendFomoEmail(applicationId).catch((error) => {
+      console.error('FOMO email failed to send:', error);
+    });
 
     return NextResponse.json({
       success: true,
