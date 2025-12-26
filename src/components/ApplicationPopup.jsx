@@ -21,7 +21,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 export default function ApplicationPopup({
   isOpen,
@@ -54,19 +53,32 @@ export default function ApplicationPopup({
 
   // Check for pending form data on mount and URL params
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    // Only run on client side
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
 
-    // Check URL params for phone number
-    const urlParams = new URLSearchParams(window.location.search);
-    const phoneParam = urlParams.get('phone');
+    try {
+      // Check URL params for phone number
+      const urlParams = new URLSearchParams(window.location.search);
+      const phoneParam = urlParams.get('phone');
 
-    // Check localStorage for pending form data
-    const pendingDataKey = phoneParam 
-      ? `pendingFormData_${phoneParam}` 
-      : Object.keys(localStorage).find(key => key.startsWith('pendingFormData_'));
-    
-    if (pendingDataKey) {
-      try {
+      // Check localStorage for pending form data
+      let pendingDataKey = null;
+      
+      if (phoneParam) {
+        pendingDataKey = `pendingFormData_${phoneParam}`;
+      } else {
+        // Safely check localStorage keys
+        try {
+          const keys = Object.keys(localStorage);
+          pendingDataKey = keys.find(key => key.startsWith('pendingFormData_')) || null;
+        } catch (e) {
+          // localStorage might not be accessible
+          console.warn('Could not access localStorage:', e);
+          return;
+        }
+      }
+      
+      if (pendingDataKey) {
         const storedData = localStorage.getItem(pendingDataKey);
         if (storedData) {
           const parsedData = JSON.parse(storedData);
@@ -74,9 +86,9 @@ export default function ApplicationPopup({
           setHasPendingPayment(true);
           toast.info("Your previous form data has been restored. Please complete the payment.");
         }
-      } catch (error) {
-        console.error('Error loading pending form data:', error);
       }
+    } catch (error) {
+      console.error('Error loading pending form data:', error);
     }
   }, []);
 
@@ -199,8 +211,14 @@ export default function ApplicationPopup({
       // Close the ApplicationPopup before opening Razorpay
       onClose();
       
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
+      // Ensure window and Razorpay are available
+      if (typeof window !== 'undefined' && window.Razorpay) {
+        const razorpay = new window.Razorpay(options);
+        razorpay.open();
+      } else {
+        toast.error("Payment gateway is not available. Please refresh the page and try again.");
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.error("Payment error:", error);
       toast.error("An error occurred during payment");
