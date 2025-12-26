@@ -4,11 +4,8 @@ import { NextResponse } from 'next/server';
 import { getAdminFromToken } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parsing for file uploads
-  },
-};
+// Note: In Next.js App Router, body parsing is handled automatically
+// No need for config export - request.formData() works without it
 
 export async function POST(request) {
   try {
