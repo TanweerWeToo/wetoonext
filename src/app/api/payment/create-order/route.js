@@ -18,7 +18,7 @@ const sendFomoEmail = async (applicationId) => {
     // Check if payment is still pending
     const applications = await query(
       'SELECT * FROM applications WHERE id = ? AND payment_status = ?',
-      [applicationId, 'PENDING_PAYMENT']
+      [applicationId, 'pending']
     );
 
     if (applications.length > 0 && !applications[0].fomo_email_sent) {
@@ -103,7 +103,7 @@ export async function POST(request) {
     await query(
       `UPDATE applications 
        SET razorpay_order_id = ?, 
-           payment_status = 'PENDING_PAYMENT',
+           payment_status = 'pending',
            payment_link_expires_at = NULL,
            updated_at = NOW()
        WHERE id = ?`,

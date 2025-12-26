@@ -76,11 +76,7 @@ const ContactForm = () => {
   };
 
   return (
-    <form
-      className="w-full"
-      noValidate
-      onSubmit={handleSubmit}
-    >
+    <form className="w-full" noValidate onSubmit={handleSubmit}>
       <div className="mb-4">
         <input
           type="text"
@@ -158,7 +154,6 @@ ContactInfo.propTypes = {
 const Contact = () => {
   return (
     <>
-
       <section
         id="contact"
         className="ezy__contact10 light py-14 md:py-24 bg-white dark:bg-[#0b1727] text-zinc-900 dark:text-white overflow-hidden"
@@ -168,7 +163,7 @@ const Contact = () => {
             <div className="col-span-12 lg:col-span-6 lg:col-start-7 sm:order-2 mb-4 lg:mb-0">
               <div className="relative min-h-[300px] rounded-2xl sm:min-h-[500px] lg:min-h-[150px] mx-auto w-full sm:w-[50vw] h-full">
                 <img
-                  src="https://cdn.easyfrontend.com/pictures/contact/contact_7.png"
+                  src="/contact-us.webp"
                   alt="Contact background"
                   className="absolute inset-0 rounded-2xl w-full h-full object-cover"
                   loading="lazy"

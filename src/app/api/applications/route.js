@@ -32,29 +32,83 @@ export async function POST(request) {
 
     // Check if mobile number already registered for this course
     const existing = await query(
-      'SELECT id FROM applications WHERE mobile = ? AND course_name = ?',
+      'SELECT id, payment_status, full_name, father_name, email, dob, state, degree, medium, batch_year, optional_paper, prelims_cleared, mains_cleared FROM applications WHERE mobile = ? AND course_name = ?',
       [mobile, courseName]
     );
 
     if (existing.length > 0) {
-      return NextResponse.json(
-        { success: false, message: 'This mobile number is already registered for this course' },
-        { status: 400 }
-      );
+      const existingApp = existing[0];
+      
+      // If payment status is 'paid', show error
+      if (existingApp.payment_status === 'paid') {
+        return NextResponse.json(
+          { success: false, message: 'This mobile number is already registered for this course' },
+          { status: 400 }
+        );
+      }
+      
+      // If payment status is 'pending' or 'cancelled', update existing record and return it
+      if (existingApp.payment_status === 'pending' || existingApp.payment_status === 'cancelled') {
+        // Update the existing application with new form data
+        await query(
+          `UPDATE applications 
+          SET full_name = ?, father_name = ?, email = ?, dob = ?, state = ?, degree = ?, medium = ?, batch_year = ?, optional_paper = ?, prelims_cleared = ?, mains_cleared = ?, payment_status = 'pending', updated_at = NOW()
+          WHERE id = ?`,
+          [fullName, fatherName, email, dob, state, degree, medium || '', batchYear || '', optionalPaper || '', prelimsCleared || '', mainsCleared || '', existingApp.id]
+        );
+        
+        return NextResponse.json({
+          success: true,
+          message: 'Application updated successfully. Please proceed with payment.',
+          applicationId: existingApp.id,
+          existingData: {
+            full_name: existingApp.full_name,
+            father_name: existingApp.father_name,
+            email: existingApp.email,
+            dob: existingApp.dob,
+            state: existingApp.state,
+            degree: existingApp.degree,
+            medium: existingApp.medium,
+            batch_year: existingApp.batch_year,
+            optional_paper: existingApp.optional_paper,
+            prelims_cleared: existingApp.prelims_cleared,
+            mains_cleared: existingApp.mains_cleared,
+          },
+          isResume: true
+        });
+      }
+      
+      // For 'expired' status, treat as new application but update existing record
+      if (existingApp.payment_status === 'expired') {
+        await query(
+          `UPDATE applications 
+          SET full_name = ?, father_name = ?, email = ?, dob = ?, state = ?, degree = ?, medium = ?, batch_year = ?, optional_paper = ?, prelims_cleared = ?, mains_cleared = ?, payment_status = 'pending', updated_at = NOW()
+          WHERE id = ?`,
+          [fullName, fatherName, email, dob, state, degree, medium || '', batchYear || '', optionalPaper || '', prelimsCleared || '', mainsCleared || '', existingApp.id]
+        );
+        
+        return NextResponse.json({
+          success: true,
+          message: 'Application updated successfully. Please proceed with payment.',
+          applicationId: existingApp.id,
+          isResume: true
+        });
+      }
     }
 
-    // Insert application
+    // Insert new application
     const result = await query(
       `INSERT INTO applications 
-      (full_name, father_name, email, mobile, dob, state, degree, medium, batch_year, optional_paper, prelims_cleared, mains_cleared, course_name, paid) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (full_name, father_name, email, mobile, dob, state, degree, medium, batch_year, optional_paper, prelims_cleared, mains_cleared, course_name, paid, payment_status) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [fullName, fatherName, email, mobile, dob, state, degree, medium || '', batchYear || '', optionalPaper || '', prelimsCleared || '', mainsCleared || '', courseName, paid || false]
     );
 
     return NextResponse.json({
       success: true,
       message: 'Application submitted successfully',
-      applicationId: result.insertId
+      applicationId: result.insertId,
+      isResume: false
     });
   } catch (error) {
     console.error('Application submission error:', error);

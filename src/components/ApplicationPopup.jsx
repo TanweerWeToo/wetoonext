@@ -30,6 +30,7 @@ export default function ApplicationPopup({
   courseFee = "2999",
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasPendingPayment, setHasPendingPayment] = useState(false);
   const [formData, setFormData] = useState({
     full_name: "",
     father_name: "",
@@ -50,6 +51,34 @@ export default function ApplicationPopup({
   useEffect(() => {
     setFormData((prev) => ({ ...prev, course_name: courseName }));
   }, [courseName]);
+
+  // Check for pending form data on mount and URL params
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Check URL params for phone number
+    const urlParams = new URLSearchParams(window.location.search);
+    const phoneParam = urlParams.get('phone');
+
+    // Check localStorage for pending form data
+    const pendingDataKey = phoneParam 
+      ? `pendingFormData_${phoneParam}` 
+      : Object.keys(localStorage).find(key => key.startsWith('pendingFormData_'));
+    
+    if (pendingDataKey) {
+      try {
+        const storedData = localStorage.getItem(pendingDataKey);
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setFormData(prev => ({ ...prev, ...parsedData }));
+          setHasPendingPayment(true);
+          toast.info("Your previous form data has been restored. Please complete the payment.");
+        }
+      } catch (error) {
+        console.error('Error loading pending form data:', error);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -118,6 +147,14 @@ export default function ApplicationPopup({
 
           if (verifyData.success) {
             toast.success("Payment successful! Application submitted.");
+            
+            // Clear localStorage for this phone number
+            if (typeof window !== 'undefined' && formData.mobile) {
+              const pendingDataKey = `pendingFormData_${formData.mobile}`;
+              localStorage.removeItem(pendingDataKey);
+            }
+            
+            setHasPendingPayment(false);
             onClose();
             // Reset form
             setFormData({
@@ -149,8 +186,12 @@ export default function ApplicationPopup({
         },
         modal: {
           ondismiss: function () {
-            toast.info("Payment cancelled");
+            // Keep status as 'pending' - don't update to 'cancelled' automatically
+            // User can resume payment later
+            toast.info("Payment cancelled. Your details are saved. You can resume payment anytime.");
             setIsSubmitting(false);
+            // Re-open the popup to show resume payment option
+            // Note: The popup is already closed, so we'll show a message instead
           },
         },
       };
@@ -172,6 +213,12 @@ export default function ApplicationPopup({
     setIsSubmitting(true);
 
     try {
+      // Save form data to localStorage before submission
+      if (typeof window !== 'undefined' && formData.mobile) {
+        const pendingDataKey = `pendingFormData_${formData.mobile}`;
+        localStorage.setItem(pendingDataKey, JSON.stringify(formData));
+      }
+
       // Submit application
       const response = await fetch("/api/applications", {
         method: "POST",
@@ -182,6 +229,22 @@ export default function ApplicationPopup({
       const data = await response.json();
 
       if (data.success) {
+        // If this is a resume payment, show message
+        if (data.isResume) {
+          setHasPendingPayment(true);
+          toast.info("Continuing with your previous application. Please complete the payment.");
+          
+          // Update form data if existing data is provided
+          if (data.existingData) {
+            setFormData(prev => ({ ...prev, ...data.existingData }));
+            // Update localStorage with merged data
+            if (typeof window !== 'undefined' && formData.mobile) {
+              const pendingDataKey = `pendingFormData_${formData.mobile}`;
+              localStorage.setItem(pendingDataKey, JSON.stringify({ ...formData, ...data.existingData }));
+            }
+          }
+        }
+        
         // Initiate payment
         await handlePayment(data.applicationId);
       } else {
@@ -205,6 +268,13 @@ export default function ApplicationPopup({
           <DialogDescription className="text-base text-gray-600">
             Please fill in your details to register for the course
           </DialogDescription>
+          {hasPendingPayment && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+              <p className="text-sm text-amber-800">
+                <strong>Payment Pending:</strong> Your details are saved. Please complete the payment to finish your registration.
+              </p>
+            </div>
+          )}
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 mt-4">
@@ -373,22 +443,33 @@ export default function ApplicationPopup({
                 position="popper"
                 className="max-h-[300px] overflow-y-auto"
               >
+                <SelectItem value="Andaman and Nicobar Islands">
+                  Andaman and Nicobar Islands
+                </SelectItem>
                 <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
                 <SelectItem value="Arunachal Pradesh">
                   Arunachal Pradesh
                 </SelectItem>
                 <SelectItem value="Assam">Assam</SelectItem>
                 <SelectItem value="Bihar">Bihar</SelectItem>
+                <SelectItem value="Chandigarh">Chandigarh</SelectItem>
                 <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
+                <SelectItem value="Dadra and Nagar Haveli and Daman and Diu">
+                  Dadra and Nagar Haveli and Daman and Diu
+                </SelectItem>
+                <SelectItem value="Delhi">Delhi</SelectItem>
                 <SelectItem value="Goa">Goa</SelectItem>
                 <SelectItem value="Gujarat">Gujarat</SelectItem>
                 <SelectItem value="Haryana">Haryana</SelectItem>
                 <SelectItem value="Himachal Pradesh">
                   Himachal Pradesh
                 </SelectItem>
+                <SelectItem value="Jammu and Kashmir">Jammu and Kashmir</SelectItem>
                 <SelectItem value="Jharkhand">Jharkhand</SelectItem>
                 <SelectItem value="Karnataka">Karnataka</SelectItem>
                 <SelectItem value="Kerala">Kerala</SelectItem>
+                <SelectItem value="Ladakh">Ladakh</SelectItem>
+                <SelectItem value="Lakshadweep">Lakshadweep</SelectItem>
                 <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
                 <SelectItem value="Maharashtra">Maharashtra</SelectItem>
                 <SelectItem value="Manipur">Manipur</SelectItem>
@@ -396,6 +477,7 @@ export default function ApplicationPopup({
                 <SelectItem value="Mizoram">Mizoram</SelectItem>
                 <SelectItem value="Nagaland">Nagaland</SelectItem>
                 <SelectItem value="Odisha">Odisha</SelectItem>
+                <SelectItem value="Puducherry">Puducherry</SelectItem>
                 <SelectItem value="Punjab">Punjab</SelectItem>
                 <SelectItem value="Rajasthan">Rajasthan</SelectItem>
                 <SelectItem value="Sikkim">Sikkim</SelectItem>

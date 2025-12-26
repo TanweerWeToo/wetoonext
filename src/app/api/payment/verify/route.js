@@ -41,7 +41,7 @@ export async function POST(request) {
     await query(
       `UPDATE applications 
        SET paid = 1, 
-           payment_status = 'PAID',
+           payment_status = 'paid',
            razorpay_payment_id = ?,
            enrollment_id = ?,
            status = 'Pending', 
