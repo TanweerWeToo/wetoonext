@@ -3,12 +3,6 @@
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
   "framework": "nextjs",
-  "outputDirectory": ".next",
-  "crons": [
-    {
-      "path": "/api/payment/send-fomo-emails",
-      "schedule": "*/10 * * * *"
-    }
-  ]
+  "outputDirectory": ".next"
 }
 
