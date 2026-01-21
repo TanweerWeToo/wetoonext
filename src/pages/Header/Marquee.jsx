@@ -35,42 +35,42 @@ export default function Marquee() {
         <div className="flex pr-8 whitespace-nowrap animate-banner [--gap:1rem]">
         <div className="flex shrink-0 animate-banner [gap:var(--gap)]">
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
           <span className="px-4 text-sm font-medium">
-            🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+            🔔 Register here for IAS MENTORSHIP PROGRAM
           </span>
         </div>
         <div className="flex shrink-0 animate-banner [gap:var(--gap)]">
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         <span className="px-4 text-sm font-medium">
-          🔔 Register here for IAS MENTORSHIP PROGRAM, Starting from 15th Dec
+          🔔 Register here for IAS MENTORSHIP PROGRAM
         </span>
         </div>
         </div>

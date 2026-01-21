@@ -10,7 +10,7 @@ export default function ApplyNowButton() {
     // Auto-open popup after 3 seconds
     const timer = setTimeout(() => {
       setIsPopupOpen(true);
-    }, 3000);
+    }, 10000);
 
     // Cleanup timer on component unmount
     return () => clearTimeout(timer);
