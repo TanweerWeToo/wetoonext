@@ -213,7 +213,7 @@ const Hero = () => {
           {[
             // "RCA",
             { label: "COACHING & CLASSES", link: "https://class.wetoomedia.com/" },
-            { label: "WETOOMEDIA SERVICES", link: "/services" },
+            { label: "UPSC BOOKS & STUDY MATERIALS", link: "https://upsciasbook.com" },
             // { label: "CIVIL SERVANT MATRIMONIAL", link: "/matrimonial" },
             // "MORE"
           ].map((item, idx) => (
