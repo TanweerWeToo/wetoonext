@@ -26,10 +26,11 @@ export default function ApplicationPopup({
   isOpen,
   onClose,
   courseName = "",
-  courseFee = "2999",
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasPendingPayment, setHasPendingPayment] = useState(false);
+  const [fetchedCourses, setFetchedCourses] = useState([]);
+  const [displayFee, setDisplayFee] = useState("2999");
   const [formData, setFormData] = useState({
     full_name: "",
     father_name: "",
@@ -46,10 +47,44 @@ export default function ApplicationPopup({
     course_name: courseName,
   });
 
-  // Update course_name in formData when courseName prop changes
+  // Normalize course name on mount or when courseName prop changes
   useEffect(() => {
-    setFormData((prev) => ({ ...prev, course_name: courseName }));
+    let normalizedName = "IAS Mentorship";
+    if (courseName?.toLowerCase().includes("rca") || courseName?.toLowerCase().includes("jamia")) {
+      normalizedName = "RCA Guidance Program";
+    }
+    setFormData((prev) => ({ ...prev, course_name: normalizedName }));
   }, [courseName]);
+
+  // Fetch course list for dynamic pricing
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const response = await fetch('/api/courses');
+        const data = await response.json();
+        if (data.success && data.courses) {
+          setFetchedCourses(data.courses);
+        }
+      } catch (error) {
+        console.error("Failed to fetch course pricing:", error);
+      }
+    };
+    fetchPricing();
+  }, []);
+
+  // Update displayFee whenever the selected course or course list changes
+  useEffect(() => {
+    const isRCA = formData.course_name === "RCA Guidance Program";
+    const targetCategory = isRCA ? "rca" : "upsc";
+    const matchedCourse = fetchedCourses.find(c => c.category === targetCategory);
+    
+    if (matchedCourse && matchedCourse.fee) {
+      setDisplayFee(matchedCourse.fee);
+    } else {
+      // Hardcoded fallbacks if data is not available yet
+      setDisplayFee(isRCA ? "650" : "2999");
+    }
+  }, [formData.course_name, fetchedCourses]);
 
   // Check for pending form data on mount and URL params
   useEffect(() => {
@@ -319,9 +354,7 @@ export default function ApplicationPopup({
                 className="max-h-[300px] overflow-y-auto"
               >
                 <SelectItem value="IAS Mentorship">IAS Mentorship</SelectItem>
-                <SelectItem value="RCA Guidance Program">
-                  RCA Guidance Program
-                </SelectItem>
+                <SelectItem value="RCA Guidance Program">RCA Guidance Program</SelectItem>
                 <SelectItem disabled value="CSE Foundation">
                   CSE Foundation
                 </SelectItem>
@@ -553,52 +586,58 @@ export default function ApplicationPopup({
             </Select>
           </div>
 
-          {/* Applying for CSE Prelims Mentorship Batch */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="batch_year"
-              className="text-sm font-medium text-gray-700"
-            >
-              Applying for CSE Prelims Mentorship Batch{" "}
-              <span className="text-red-500">*</span>
-            </Label>
-            <Select
-              value={formData.batch_year}
-              onValueChange={(value) => handleSelectChange("batch_year", value)}
-              required
-            >
-              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
-                <SelectValue placeholder="Select batch year" />
-              </SelectTrigger>
-              <SelectContent
-                position="popper"
-                className="max-h-[300px] overflow-y-auto"
+          {/* Applying for CSE Prelims Mentorship Batch - Hide for RCA/JAMIA programs */}
+          {!formData.course_name?.toLowerCase().includes("rca") && 
+           !formData.course_name?.toLowerCase().includes("jamia") && (
+            <div className="space-y-2">
+              <Label
+                htmlFor="batch_year"
+                className="text-sm font-medium text-gray-700"
               >
-                <SelectItem value="2026">2026</SelectItem>
-                <SelectItem value="2027">2027</SelectItem>
-                <SelectItem value="2028">2028</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                Applying for CSE Prelims Mentorship Batch{" "}
+                <span className="text-red-500">*</span>
+              </Label>
+              <Select
+                value={formData.batch_year}
+                onValueChange={(value) => handleSelectChange("batch_year", value)}
+                required
+              >
+                <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                  <SelectValue placeholder="Select batch year" />
+                </SelectTrigger>
+                <SelectContent
+                  position="popper"
+                  className="max-h-[300px] overflow-y-auto"
+                >
+                  <SelectItem value="2026">2026</SelectItem>
+                  <SelectItem value="2027">2027</SelectItem>
+                  <SelectItem value="2028">2028</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
-          {/* Optional Paper */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="optional_paper"
-              className="text-sm font-medium text-gray-700"
-            >
-              Optional Paper (if applicable)
-            </Label>
-            <Input
-              id="optional_paper"
-              name="optional_paper"
-              type="text"
-              value={formData.optional_paper}
-              onChange={handleChange}
-              placeholder="Optional subject"
-              className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-            />
-          </div>
+          {/* Optional Paper - Hide for RCA/JAMIA programs */}
+          {!formData.course_name?.toLowerCase().includes("rca") && 
+           !formData.course_name?.toLowerCase().includes("jamia") && (
+            <div className="space-y-2">
+              <Label
+                htmlFor="optional_paper"
+                className="text-sm font-medium text-gray-700"
+              >
+                Optional Paper (if applicable)
+              </Label>
+              <Input
+                id="optional_paper"
+                name="optional_paper"
+                type="text"
+                value={formData.optional_paper}
+                onChange={handleChange}
+                placeholder="Optional subject"
+                className="border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+              />
+            </div>
+          )}
 
           {/* Number of Prelims Cleared */}
           <div className="space-y-2">
@@ -630,42 +669,45 @@ export default function ApplicationPopup({
             </Select>
           </div>
 
-          {/* Number of Mains Cleared */}
-          <div className="space-y-2">
-            <Label
-              htmlFor="mains_cleared"
-              className="text-sm font-medium text-gray-700"
-            >
-              Number of Mains Cleared (0–6)
-            </Label>
-            <Select
-              value={formData.mains_cleared}
-              onValueChange={(value) => handleSelectChange("mains_cleared", value)}
-            >
-              <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
-                <SelectValue placeholder="Select number of mains cleared" />
-              </SelectTrigger>
-              <SelectContent
-                position="popper"
-                className="max-h-[300px] overflow-y-auto"
+          {/* Number of Mains Cleared - Hide for RCA/JAMIA programs */}
+          {!formData.course_name?.toLowerCase().includes("rca") && 
+           !formData.course_name?.toLowerCase().includes("jamia") && (
+            <div className="space-y-2">
+              <Label
+                htmlFor="mains_cleared"
+                className="text-sm font-medium text-gray-700"
               >
-                <SelectItem value="0">0</SelectItem>
-                <SelectItem value="1">1</SelectItem>
-                <SelectItem value="2">2</SelectItem>
-                <SelectItem value="3">3</SelectItem>
-                <SelectItem value="4">4</SelectItem>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="6">6</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                Number of Mains Cleared (0–6)
+              </Label>
+              <Select
+                value={formData.mains_cleared}
+                onValueChange={(value) => handleSelectChange("mains_cleared", value)}
+              >
+                <SelectTrigger className="w-full border-gray-300 focus:border-emerald-500 focus:ring-emerald-500">
+                  <SelectValue placeholder="Select number of mains cleared" />
+                </SelectTrigger>
+                <SelectContent
+                  position="popper"
+                  className="max-h-[300px] overflow-y-auto"
+                >
+                  <SelectItem value="0">0</SelectItem>
+                  <SelectItem value="1">1</SelectItem>
+                  <SelectItem value="2">2</SelectItem>
+                  <SelectItem value="3">3</SelectItem>
+                  <SelectItem value="4">4</SelectItem>
+                  <SelectItem value="5">5</SelectItem>
+                  <SelectItem value="6">6</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
           {/* Submit Button */}
           <div className="flex items-center justify-between pt-4 border-t">
             <p className="text-sm text-gray-600">
               Platform Charge:{"  "}
               <span className="font-semibold text-lg text-emerald-600">
-                ₹{courseFee}/-
+                ₹{displayFee}/-
               </span>
             </p>
             <Button

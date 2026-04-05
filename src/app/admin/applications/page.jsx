@@ -392,14 +392,20 @@ Complete information about this application
                 <p className="text-sm font-medium text-gray-500">Your Medium</p>
                 <p className="text-sm">{selectedApplication.medium || "—"}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Applying for CSE Prelims Mentorship Batch</p>
-                <p className="text-sm">{selectedApplication.batch_year || "—"}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Optional Paper</p>
-                <p className="text-sm">{selectedApplication.optional_paper || "—"}</p>
-              </div>
+              {!selectedApplication.course_name?.toLowerCase().includes("rca") && 
+               !selectedApplication.course_name?.toLowerCase().includes("jamia") && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Applying for CSE Prelims Mentorship Batch</p>
+                  <p className="text-sm">{selectedApplication.batch_year || "—"}</p>
+                </div>
+              )}
+              {!selectedApplication.course_name?.toLowerCase().includes("rca") && 
+               !selectedApplication.course_name?.toLowerCase().includes("jamia") && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Optional Paper</p>
+                  <p className="text-sm">{selectedApplication.optional_paper || "—"}</p>
+                </div>
+              )}
               <div className="col-span-2">
                 <p className="text-sm font-medium text-gray-500">Course</p>
                 <p className="text-sm">{selectedApplication.course_name}</p>
@@ -408,10 +414,13 @@ Complete information about this application
                 <p className="text-sm font-medium text-gray-500">Number of Prelims Cleared</p>
                 <p className="text-sm">{selectedApplication.prelims_cleared || "—"}</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Number of Mains Cleared</p>
-                <p className="text-sm">{selectedApplication.mains_cleared || "—"}</p>
-              </div>
+              {!selectedApplication.course_name?.toLowerCase().includes("rca") && 
+               !selectedApplication.course_name?.toLowerCase().includes("jamia") && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Number of Mains Cleared</p>
+                  <p className="text-sm">{selectedApplication.mains_cleared || "—"}</p>
+                </div>
+              )}
               <div>
                 <p className="text-sm font-medium text-gray-500">Status</p>
                 {getStatusBadge(selectedApplication.status)}
