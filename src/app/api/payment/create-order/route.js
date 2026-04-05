@@ -90,6 +90,8 @@ export async function POST(request) {
       );
     }
 
+    const app = applications[0];
+
     // Fetch course fee dynamically from database
     const isRca = app.course_name.toLowerCase().includes("rca") || app.course_name.toLowerCase().includes("jamia");
     const targetCategory = isRca ? "rca" : "upsc";
