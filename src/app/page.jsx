@@ -7,6 +7,7 @@ import ProgramImpact from "@/pages/Home/ProgramImpact";
 import Program from "@/pages/Home/Program";
 import Contact from "@/pages/Home/Contact";
 import ApplyNowButton from "@/components/ApplyNowButton";
+import PromoPopup from "@/components/PromoPopup";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <ProgramImpact />
       <Contact />
       <ApplyNowButton />
+      <PromoPopup />
     </>
   );
 }
