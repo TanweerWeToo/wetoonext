@@ -4,11 +4,16 @@ import { query } from '@/lib/db';
 import { sendEmail, generateResumePaymentLink } from '@/lib/emailConfig';
 import { fomoEmailTemplate } from '@/lib/emailTemplates';
 
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Helper function to initialize Razorpay instance lazily
+const getRazorpay = () => {
+  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+    throw new Error('Razorpay API keys (RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET) are missing from your environment variables.');
+  }
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  });
+};
 
 // Helper function to send FOMO email
 // Note: In serverless environments, we send immediately instead of using setTimeout
@@ -96,6 +101,7 @@ export async function POST(request) {
     const currency = 'INR';
 
     // Create Razorpay order
+    const razorpay = getRazorpay();
     const options = {
       amount: amount,
       currency: currency,
