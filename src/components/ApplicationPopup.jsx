@@ -319,14 +319,11 @@ export default function ApplicationPopup({
                 className="max-h-[300px] overflow-y-auto"
               >
                 <SelectItem value="IAS Mentorship">IAS Mentorship</SelectItem>
-                <SelectItem disabled value="RCA Preparation">
-                  RCA Preparation
+                <SelectItem value="RCA Guidance Program">
+                  RCA Guidance Program
                 </SelectItem>
                 <SelectItem disabled value="CSE Foundation">
                   CSE Foundation
-                </SelectItem>
-                <SelectItem disabled value="RCA Guidance Program">
-                  RCA Guidance Program
                 </SelectItem>
                 <SelectItem disabled value="CSE & RCA Essay Master Class">
                   CSE & RCA Essay Master Class
