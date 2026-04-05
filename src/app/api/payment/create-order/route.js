@@ -24,7 +24,11 @@ const sendFomoEmail = async (applicationId) => {
     if (applications.length > 0 && !applications[0].fomo_email_sent) {
       const app = applications[0];
       const resumeLink = generateResumePaymentLink(applicationId);
-      const amount = '2999'; // ₹2999
+      
+      const isRcam = app.course_name.toLowerCase().includes("rca") || app.course_name.toLowerCase().includes("jamia");
+      const targetCategory = isRcam ? "rca" : "upsc";
+      const matchedCourses = await query('SELECT fee FROM courses WHERE category = ? AND is_active = 1 LIMIT 1', [targetCategory]);
+      const amount = matchedCourses.length > 0 ? matchedCourses[0].fee : '2999';
 
       const emailData = fomoEmailTemplate({
         fullName: app.full_name,
@@ -81,8 +85,14 @@ export async function POST(request) {
       );
     }
 
-    // Fixed application fee (in paise - ₹2999 = 299900 paise)
-    const amount = 299900; // ₹2999
+    // Fetch course fee dynamically from database
+    const isRca = app.course_name.toLowerCase().includes("rca") || app.course_name.toLowerCase().includes("jamia");
+    const targetCategory = isRca ? "rca" : "upsc";
+    const matchedCourses = await query('SELECT fee FROM courses WHERE category = ? AND is_active = 1 LIMIT 1', [targetCategory]);
+    
+    // Default to 2999 if not found, otherwise convert to paise
+    const feeInInr = matchedCourses.length > 0 ? parseInt(matchedCourses[0].fee) : 2999;
+    const amount = feeInInr * 100; // Razorpay expects amount in paise
     const currency = 'INR';
 
     // Create Razorpay order
